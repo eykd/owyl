@@ -41,9 +41,6 @@ pi_1_2 = pi/2.0
 import rabbyt
 import enum
 
-import world
-from entity import EntityCategories
-
 from cellulose import InputCellDescriptor, ComputedCellDescriptor
 
 RESULT = enum.Enum('FAIL', 'SUCCEED', 'CONTINUE')
