@@ -1,0 +1,10 @@
+*~
+*.pyc
+*.zdb*
+*.log
+*.tmp
+.coverage
+*.leo
+*.egg*
+*.o
+Star*

@@ -2,24 +2,23 @@
 """testai -- tests for Behavior Tree AI.
 
 $Author$
-$Rev: 871 $
-$Date: 2008-04-02 19:38:18 -0500 (Wed, 02 Apr 2008) $
+$Rev$
+$Date$
 """
 
 __author__ = "$Author$"
-__revision__ = "$Rev: 871 $"
-__date__ = "$Date: 2008-04-02 19:38:18 -0500 (Wed, 02 Apr 2008) $"
+__revision__ = "$Rev$"
+__date__ = "$Date$"
 
 import unittest
 import operator
 
-from owyl import ai
-from owyl.ai import Log
-from owyl.ai import RESULT
-from owyl.ai import Root, Sequence, Parallel
-from owyl.ai import Selector, pickByPriority, pickByProbability
-from owyl.ai import RepeatUntilFail, RepeatUntilSucceed
-from owyl.ai import Succeed, Fail, Error
+from owyl import Log
+from owyl import RESULT
+from owyl import Root, Sequence, Parallel
+from owyl import Selector, pickByPriority, pickByProbability
+from owyl import RepeatUntilFail, RepeatUntilSucceed
+from owyl import Succeed, Fail, Error
 
 class LoggingCase(unittest.TestCase):
     def log(self, child, result):

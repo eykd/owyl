@@ -2,15 +2,15 @@
 """setup -- setuptools setup file for pyweek6 entry.
 
 $Author$
-$Rev: 1016 $
-$Date: 2008-04-05 16:22:08 -0500 (Sat, 05 Apr 2008) $
+$Rev$
+$Date$
 """
 
 __author__ = "$Author$"
-__revision__ = "$Rev: 1016 $"
+__revision__ = "$Rev$"
 __version__ = "0.1"
 __release__ = '.r'.join((__version__, __revision__[6:-2]))
-__date__ = "$Date: 2008-04-05 16:22:08 -0500 (Sat, 05 Apr 2008) $"
+__date__ = "$Date$"
 
 import sys
 
