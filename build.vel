@@ -36,7 +36,7 @@ targets(
                $ svn2cl
                ]
     ci [$ touch CHANGES
-        $ cat CHANGES|cat - ChangeLog > /tmp/out && mv /tmp/out ChangeLog
+        $ echo "`cat CHANGES`\n"|cat - ChangeLog > /tmp/out && mv /tmp/out ChangeLog
         $ svn ci --force-log -F ./CHANGES
         $ svn up
         $ svn2cl
