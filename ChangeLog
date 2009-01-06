@@ -1,0 +1,64 @@
+2009-01-06 02:42  david.eyk
+
+	* CHANGES, build.vel, remove.py: Improvements to build.vel; added
+	  remove for vellum.
+	  
+	  * Fixed test dependencies and API uploader.
+	  * Added release_dist command, improved dependencies.
+
+2009-01-06 02:31  david.eyk
+
+	* CHANGES, LICENSE, README, TODO: Updated properties one more time.
+
+2009-01-06 02:29  david.eyk
+
+	* CHANGES, LICENSE, README, TODO, build.vel: Added README and TODO
+	  list. Fixed build.vel.
+
+2009-01-06 02:12  david.eyk
+
+	* src/owyl/__init__.py: Added properties to owil.__init__
+
+2009-01-06 02:12  david.eyk
+
+	* buildout.cfg, setup.py, src/owyl/__init__.py: Adjusted
+	  setup/build files to reflect project details.
+
+2009-01-06 01:18  david.eyk
+
+	* build.vel, epydoc.config, googlecode_upload.py, src/owyl/core.py,
+	  tests/testowyl.py: Updated keywords and ignores.
+
+2009-01-06 01:17  david.eyk
+
+	* build.vel, buildout.cfg, epydoc.config, ez_setup.py,
+	  googlecode_upload.py, setup.cfg, setup.py, src/owyl/__init__.py,
+	  src/owyl/base.py, src/owyl/core.py, src/owyl/decorators.py,
+	  src/owyl/memory.py, src/owyl/movement.py, src/owyl/structure.py,
+	  tests/testai.py, tests/testowyl.py: Completely new codebase, with
+	  a new interface. More to follow.
+
+2008-04-08 15:42  david.eyk
+
+	* ., .svnignore, .svnkeywords, bootstrap.py, buildout.cfg,
+	  ez_setup.py, setup.cfg, setup.py, src, src/__init__.py, src/owyl,
+	  src/owyl/__init__.py, src/owyl/ai.py, src/owyl/base.py,
+	  src/owyl/decorators.py, src/owyl/memory.py, src/owyl/movement.py,
+	  src/owyl/structure.py, tests, tests/testai.py, update-properties:
+	  Broke ai into components. Imports not yet filled in.
+
+2008-04-08 02:56  david.eyk
+
+	* bootstrap.py, buildout.cfg, ez_setup.py, setup.cfg, setup.py,
+	  src/__init__.py, src/owyl/__init__.py, src/owyl/ai.py, tests,
+	  tests/testai.py: Project packaging.
+
+2008-04-07 16:13  david.eyk
+
+	* src, src/owyl, src/owyl/ai.py: Initial checkin of owyl pyweek6
+	  code.
+
+2008-04-04 19:41  
+
+	* .: Initial directory structure.
+

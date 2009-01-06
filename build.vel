@@ -7,7 +7,7 @@ depends(
     bootstrap ['dirs']
     buildout ['bootstrap' 'dirs']
     buildout_offline ['bootstrap' 'dirs']
-    ci []
+    ci ['changelog']
     clean_all ['clean_dist' 'clean_docs' 'clean_env']
     clean []
     clean_build ['clean']
