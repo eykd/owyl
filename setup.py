@@ -40,7 +40,7 @@ except ImportError:
 
 from setuptools import setup, find_packages
 
-INSTALL_REQUIRES=[]
+INSTALL_REQUIRES=['egenix-mx-base',]
 ZIP_SAFE = True
 
 setup(

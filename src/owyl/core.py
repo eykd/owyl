@@ -12,7 +12,10 @@ __author__ = "$Author$"[9:-2]
 __revision__ = "$Rev$"[6:-2]
 __date__ = "$Date$"[7:-2]
 
-from mx.Stack import Stack, EmptyError
+try:
+    from mx.Stack import Stack, EmptyError
+except ImportError:
+    from .stack import Stack, EmptyError
 
 RETURN_VALUES = (True, False, None)
 

@@ -1,4 +1,8 @@
-Bumped future version to 0.2.1
+Added alternate stack implementation if mx.Stack is not available.
+
+2009-01-06 04:19  david.eyk
+
+	* ChangeLog, setup.py: Bumped future version to 0.2.1
 
 2009-01-06 04:18  david.eyk
 
