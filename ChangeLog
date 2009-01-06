@@ -1,4 +1,8 @@
-One more tweak to ci target.\n
+Finally perfected the ci target. I'll stop spamming the ChangeLog now.
+2009-01-06 02:54  david.eyk
+
+	* ChangeLog, build.vel: One more tweak to ci target.
+
 2009-01-06 02:51  david.eyk
 
 	* CHANGES, ChangeLog, build.vel: Removed CHANGES file. Going with
