@@ -10,7 +10,7 @@ __author__ = "$Author$"[9:-2]
 __revision__ = "$Rev$"
 __date__ = "$Date$"[7:-2]
 
-__version__ = "0.2"
+__version__ = "0.2.1"
 __release__ = '.r'.join((__version__, __revision__))
 
 __description__ = "The goal of Owyl: provide a fast and flexible Behavior Tree library implemented in python."
