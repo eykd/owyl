@@ -13,15 +13,12 @@ depends(
     clean_build ['clean']
     clean_env ['clean']
     clean_dist ['clean_build']
-    dist ['docs' 'prepare_dist' 'upload_docs']
     docs ['clean_docs' 'dirs' ]
     rebuild ['clean_env' 'buildout']
-    run ['buildout']
-    debug ['buildout']
-    headless ['buildout']
-    py2app ['buildout']
+    prepare_dist []
+    release_dist ['prepare_dist' 'upload_docs']
     sdist ['docs']
-    test []
+    test ['buildout']
     upload_docs ['docs']
     )
 
@@ -73,9 +70,6 @@ targets(
             mode 0755)
 	  ]
 
-    dist [$ python setup.py sdist bdist_egg register
-          ]
-
     docs [$ epydoc -v --config epydoc.config
           ]
 
@@ -88,11 +82,16 @@ targets(
 
     rebuild py [|pass
                 ]
+
+    release_dist [$ python setup.py register sdist bdist_egg upload
+          ]
+
+
     test $ ./bin/nosetests -vxd
 
     update [$ rm -f ./ez_setup.py
             $ wget http://peak.telecommunity.com/dist/ez_setup.py
             ]
-    upload_docs [$ rsync -avz --delete docs/html/api/ eykd.net:/home/eykd/webapps/net_eykd_worlds__static/dyce/api/
+    upload_docs [$ rsync -avz --delete docs/html/api/ eykd.net:/home/eykd/webapps/net_eykd_worlds__static/owyl/api/
                  ]
     )

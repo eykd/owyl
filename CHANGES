@@ -1,1 +1,4 @@
-Updated properties one more time.
+Improvements to build.vel; added remove for vellum.
+
+ * Fixed test dependencies and API uploader.
+ * Added release_dist command, improved dependencies.
