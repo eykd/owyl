@@ -1,0 +1,100 @@
+options(default "run")
+
+imports[module(from 'remove')
+        ]
+
+depends(
+    bootstrap ['dirs']
+    buildout ['bootstrap' 'dirs' 'dcalc']
+    buildout_offline ['bootstrap' 'dirs']
+    ci ['dcalc']
+    clean_all ['clean_dist' 'clean_docs' 'clean_env']
+    clean []
+    clean_build ['clean']
+    clean_env ['clean']
+    clean_dist ['clean_build']
+    dist ['dcalc' 'docs' 'prepare_dist' 'upload_docs']
+    docs ['clean_docs' 'dirs' 'dcalc']
+    rebuild ['clean_env' 'buildout']
+    run ['buildout']
+    debug ['buildout']
+    headless ['buildout']
+    py2app ['buildout']
+    sdist ['dcalc' 'docs']
+    test ['dcalc']
+    upload_docs ['docs']
+    )
+
+targets(
+    bootstrap [unless "os.path.exists('./bin/buildout')"
+               $ python2.5 bootstrap.py
+               ]
+    buildout [unless "os.path.exists('./bin/python-local')"
+              $ ./bin/buildout
+              ]
+    buildout_offline [unless "os.path.exists('./bin/python-local')"
+              $ ./bin/buildout -o
+              ]
+    changelog [$ svn up
+               $ svn2cl
+               ]
+    ci [$ touch CHANGES
+        $ svn ci -F ./CHANGES
+        $ svn up
+        $ svn2cl
+        $ rm ./CHANGES
+        $ touch CHANGES
+        ]
+    clean [forall(files "*.pyc" var "file" do remove(paths ["%(file)s"]))
+           forall(files "*~" var "file" do remove(paths ["%(file)s"]))
+           forall(files "*.pyo" var "file" do remove(paths ["%(file)s"]))
+           forall(files "*#" var "file" do remove(paths ["%(file)s"]))
+           forall(files ".#*" var "file" do remove(paths ["%(file)s"]))
+           forall(files "*.lock" var "file" do remove(paths ["%(file)s"]))
+           forall(files "*.log*" var "file" do remove(paths ["%(file)s"]))
+           ]
+    clean_docs [remove(paths ['docs'] force "True")]
+
+    clean_build [remove(paths ['build'] force "True")]
+
+    clean_buildout remove(paths ['bin/python-local'])
+
+    clean_env [remove(paths ['downloads'
+                             'develop-eggs'
+                             'parts'
+                             'bin'
+                             'eggs'
+                             '.installed.cfg']
+                      force "True")
+               ]
+    clean_dist [remove(paths ['dist'] force "True")]
+
+    dcalc [$ yapps2 ./src/dyce/dcalc.g ./src/dyce/dcalc.py 
+           ]
+    dirs [mkdirs(paths ["downloads" "docs" "docs/html" "docs/html/api"]
+            mode 0755)
+	  ]
+
+    dist [$ python setup.py sdist bdist_egg register
+          ]
+
+    docs [$ epydoc -v --config epydoc.config
+          ]
+
+    prepare_dist [$ python setup.py setopt -c egg_info -o tag_build -r
+                  $ python setup.py setopt -c egg_info -o tag_svn_revision -r
+                  ]
+
+    sdist [$ python setup.py sdist
+          ]
+
+    rebuild py [|pass
+                ]
+    test $ ./bin/nosetests -vxd
+
+    update [$ rm -f ./ez_setup.py
+            $ wget http://peak.telecommunity.com/dist/ez_setup.py
+            ]
+    upload_docs [$ rsync -avz --delete docs/html/api/ eykd.net:/home/eykd/webapps/net_eykd_worlds__static/dyce/api/
+                 ]
+    )
