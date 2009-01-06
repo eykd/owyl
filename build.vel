@@ -7,7 +7,7 @@ depends(
     bootstrap ['dirs']
     buildout ['bootstrap' 'dirs']
     buildout_offline ['bootstrap' 'dirs']
-    ci ['changelog']
+    ci []
     clean_all ['clean_dist' 'clean_docs' 'clean_env']
     clean []
     clean_build ['clean']
@@ -86,6 +86,7 @@ targets(
                 ]
 
     release_dist [$ python setup.py register sdist bdist_egg upload
+                  $ ./googlecode_upload.py --config-dir=~/.subversion/auth --summary=`pwd|sed -E sN/.+/NN` --project=Owyl --labels=`pwd|sed -E sN/.+/NN` `ls dist`
           ]
 
 
