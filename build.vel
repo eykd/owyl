@@ -5,23 +5,23 @@ imports[module(from 'remove')
 
 depends(
     bootstrap ['dirs']
-    buildout ['bootstrap' 'dirs' 'dcalc']
+    buildout ['bootstrap' 'dirs']
     buildout_offline ['bootstrap' 'dirs']
-    ci ['dcalc']
+    ci []
     clean_all ['clean_dist' 'clean_docs' 'clean_env']
     clean []
     clean_build ['clean']
     clean_env ['clean']
     clean_dist ['clean_build']
-    dist ['dcalc' 'docs' 'prepare_dist' 'upload_docs']
-    docs ['clean_docs' 'dirs' 'dcalc']
+    dist ['docs' 'prepare_dist' 'upload_docs']
+    docs ['clean_docs' 'dirs' ]
     rebuild ['clean_env' 'buildout']
     run ['buildout']
     debug ['buildout']
     headless ['buildout']
     py2app ['buildout']
-    sdist ['dcalc' 'docs']
-    test ['dcalc']
+    sdist ['docs']
+    test []
     upload_docs ['docs']
     )
 
@@ -39,7 +39,7 @@ targets(
                $ svn2cl
                ]
     ci [$ touch CHANGES
-        $ svn ci -F ./CHANGES
+        $ svn ci --force-log -F ./CHANGES
         $ svn up
         $ svn2cl
         $ rm ./CHANGES
@@ -69,8 +69,6 @@ targets(
                ]
     clean_dist [remove(paths ['dist'] force "True")]
 
-    dcalc [$ yapps2 ./src/dyce/dcalc.g ./src/dyce/dcalc.py 
-           ]
     dirs [mkdirs(paths ["downloads" "docs" "docs/html" "docs/html/api"]
             mode 0755)
 	  ]
