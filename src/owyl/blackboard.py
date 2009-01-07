@@ -15,7 +15,9 @@ __revision__ = "$Rev$"[6:-2]
 __date__ = "$Date$"[7:-2]
 
 
-from core import task
+import core
+
+__all__ = ['checkBB', 'setBB',]
 
 class Blackboard(dict):
     """A dict that defaults values to None.
@@ -24,7 +26,7 @@ class Blackboard(dict):
         super(Blackboard, self).__init__(**kwargs)
         self.setdefault(None)
 
-@task
+@core.task
 def checkBB(**kwargs):
     """Check a value on the blackboard.
 
@@ -43,7 +45,7 @@ def checkBB(**kwargs):
     result = check(value) and True or False # Always return a boolean.
     return result
 
-@task
+@core.task
 def setBB(**kwargs):
     """Set a value on the blackboard.
 

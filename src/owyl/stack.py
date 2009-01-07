@@ -14,6 +14,8 @@ __author__ = "$Author$"[9:-2]
 __revision__ = "$Rev$"[6:-2]
 __date__ = "$Date$"[7:-2]
 
+__all__ = "EmptyError Stack".split()
+
 EmptyError = IndexError
 
 class Stack(list):

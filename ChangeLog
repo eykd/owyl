@@ -1,7 +1,22 @@
-Updated README, svn properties.
+Housekeeping.
 
-Updated README, svn properties.
-Fixed some epydoc warnings.
+ * Updated README, svn properties.
+ * Added __all__ to modules so epydoc will recognize the decorated
+   functions.
+
+
+2009-01-07 15:15  david.eyk
+
+	* [r26] ChangeLog, INSTALL, README, remove.py,
+	  src/owyl/__init__.py, src/owyl/blackboard.py, src/owyl/core.py,
+	  src/owyl/stack.py, tests/testowyl.py, update-properties,
+	  upload_to_google.sh: Updated README, svn properties.
+
+2009-01-07 14:00  david.eyk
+
+	* [r25] ChangeLog, src/owyl/__init__.py, src/owyl/core.py: Fixed
+	  some epydoc warnings.
+
 2009-01-07 13:52  david.eyk
 
 	* [r24] ChangeLog, src/owyl/blackboard.py: Added blackboard

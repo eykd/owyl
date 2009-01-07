@@ -21,6 +21,10 @@ except ImportError:
 
 RETURN_VALUES = (True, False, None)
 
+__all__ = ['task', 'visit', 'succeed', 'fail', 'succeedAfter', 'failAfter',
+           'sequence', 'selector', 'parallel', 'PARALLEL_SUCCESS',
+           'throw', 'catch']
+
 def task(func):
     """Task decorator.
 

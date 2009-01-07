@@ -14,9 +14,11 @@ __author__ = "$Author$"[9:-2]
 __revision__ = "$Rev$"[6:-2]
 __date__ = "$Date$"[7:-2]
 
-from core import task
+import core
 
-@task
+__all__ = ['identity', 'repeatUntilFail', 'repeatUntilSucceed']
+
+@core.task
 def identity(child, **kwargs):
     """Transparent decorator. Pass yielded values from child unchanged.
     """
@@ -25,7 +27,7 @@ def identity(child, **kwargs):
         result = (yield child)
     yield result
 
-@task
+@core.task
 def repeatUntilFail(child, **kwargs):
     """Repeatedly iterate over the child until it fails.
 
@@ -45,7 +47,7 @@ def repeatUntilFail(child, **kwargs):
             result = None
     yield final_value
 
-@task
+@core.task
 def repeatUntilSucceed(child, **kwargs):
     """Repeatedly iterate over the child until it succeeds.
 
