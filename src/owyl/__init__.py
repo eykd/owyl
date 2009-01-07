@@ -2,7 +2,7 @@
 """owyl -- Owyl Behavior Trees
 
 Behavior Trees are a form of U{hierarchical
-logic<http://aigamedev.com/hierarchical-logic}, and are quite useful
+logic<http://aigamedev.com/hierarchical-logic>}, and are quite useful
 and flexible for implementing game AI.
 
 Owyl implements a behavior tree using nested iterators/generators. A

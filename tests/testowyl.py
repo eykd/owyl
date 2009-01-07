@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """testowyl -- some tests for owyl.
 
-
-
 Copyright 2008 David Eyk. All rights reserved.
 
 $Author$\n
@@ -17,8 +15,14 @@ __date__ = "$Date$"[7:-2]
 import unittest
 
 import owyl
+from owyl import blackboard
 
-class OwylCoreTests(unittest.TestCase):
+class OwylTests(unittest.TestCase):
+    """Tests for Owyl.
+
+    Note: tests should run the tree twice to make sure that the
+    constructed tree is re-usable.
+    """
     def testSucceed(self):
         """Can we succeed?
         """
@@ -31,6 +35,7 @@ class OwylCoreTests(unittest.TestCase):
         self.assertEqual(t.next(), True)
         self.assertRaises(StopIteration, t.next)
 
+
     def testFail(self):
         """Can we fail?
         """
@@ -42,6 +47,7 @@ class OwylCoreTests(unittest.TestCase):
         t = s()
         self.assertEqual(t.next(), False)
         self.assertRaises(StopIteration, t.next)
+
 
 
     def testVisitSequenceSuccess(self):
@@ -61,6 +67,7 @@ class OwylCoreTests(unittest.TestCase):
         results =  [x for x in v if x is not None]
         self.assertEqual(results, [True, True, True, True])
 
+
     def testVisitSequenceFailure(self):
         """Can we visit a failing sequence?
         """
@@ -79,6 +86,7 @@ class OwylCoreTests(unittest.TestCase):
         results =  [x for x in v if x is not None]
         self.assertEqual(results, [True, True, False, False])
         
+
     def testVisitSelectorSuccess(self):
         """Can we visit a successful selector?
         """
@@ -97,6 +105,7 @@ class OwylCoreTests(unittest.TestCase):
         results =  [x for x in v if x is not None]
         self.assertEqual(results, [False, False, True, True])
 
+
     def testVisitSelectorFailure(self):
         """Can we visit a failing selector?
         """
@@ -113,6 +122,7 @@ class OwylCoreTests(unittest.TestCase):
 
         results =  [x for x in v if x is not None]
         self.assertEqual(results, [False, False, False, False])
+
 
     def testParallel_AllSucceed_Success(self):
         """Can we visit a suceeding parallel (all succeed)?
@@ -132,6 +142,7 @@ class OwylCoreTests(unittest.TestCase):
         results =  [x for x in v if x is not None]
         self.assertEqual(results, [True,])
 
+
     def testParallel_OneSucceeds_Success(self):
         """Can we visit a suceeding parallel (one succeeds)?
         """
@@ -150,6 +161,7 @@ class OwylCoreTests(unittest.TestCase):
         results =  [x for x in v if x is not None]
         self.assertEqual(results, [True,])
 
+
     def testParallel_AllSucceed_Failure(self):
         """Can we visit a failing parallel (all succeed)?
         """
@@ -162,6 +174,7 @@ class OwylCoreTests(unittest.TestCase):
 
         results =  [x for x in v if x is not None]
         self.assertEqual(results, [False,])
+
 
     def testParallel_OneSucceeds_Failure(self):
         """Can we visit a failing parallel (one succeeds)?
@@ -181,6 +194,7 @@ class OwylCoreTests(unittest.TestCase):
         results =  [x for x in v if x is not None]
         self.assertEqual(results, [False,])
 
+
     def testThrow(self):
         """Can we throw an exception within the tree?
         """
@@ -198,6 +212,7 @@ class OwylCoreTests(unittest.TestCase):
         self.assertEqual(v.next(), True)
         self.assertEqual(v.next(), True)
         self.assertRaises(ValueError, v.next)
+
 
     def testCatch(self):
         """Can we catch an exception thrown within the tree?
@@ -219,6 +234,7 @@ class OwylCoreTests(unittest.TestCase):
         self.assertEqual(v.next(), True)
         self.assertEqual(v.next(), True)
 
+
     def testCatchIgnoresOthers(self):
         """Does catch ignore other exceptions thrown within the tree?
         """
@@ -239,11 +255,11 @@ class OwylCoreTests(unittest.TestCase):
         self.assertEqual(v.next(), True)
         self.assertRaises(ValueError, v.next)
 
-    
-class OwylDecoratorTests(unittest.TestCase):
+
     def testIdentity(self):
         """Does identity pass on return values unchanged?
         """
+        # Succeed after 5 iterations.
         after = 5
         tree = owyl.identity(owyl.succeedAfter(after=after))
 
@@ -269,6 +285,14 @@ class OwylDecoratorTests(unittest.TestCase):
             self.assertEqual(v.next(), None)
         self.assertEqual(v.next(), False)
 
+
+        
+
 if __name__ == "__main__":
-    import testoob
-    testoob.main()
+    runner = unittest
+    try:
+        import testoob
+        runner = testoob
+    except ImportError:
+        pass
+    runner.main()

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""base -- base behaviors for Owyl.
+"""core -- core behaviors for Owyl.
 
 Copyright 2008 David Eyk. All rights reserved.
 

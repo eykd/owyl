@@ -6,13 +6,13 @@
 Copyright 2008 David Eyk. All rights reserved.
 
 $Author$\n
-$Rev: 0 $\n
-$Date: 0 $
+$Rev$\n
+$Date$
 """
 
 __author__ = "$Author$"[9:-2]
-__revision__ = "$Rev: 0 $"[6:-2]
-__date__ = "$Date: Today $"[7:-2]
+__revision__ = "$Rev$"[6:-2]
+__date__ = "$Date$"[7:-2]
 
 EmptyError = IndexError
 
