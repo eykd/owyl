@@ -1,7 +1,14 @@
-Many improvements.
+Added user to upload_docs.
 
- * Differentiating between task and parent_task function decorators.
- * Added blackboard checkBB and setBB, with tests!
+2009-01-07 22:35  david.eyk
+
+	* [r28] ChangeLog, src/owyl/blackboard.py, src/owyl/core.py,
+	  src/owyl/decorators.py, tests/testowyl.py: Many improvements.
+	  
+	  * Differentiating between task and parent_task function
+	  decorators.
+	  * Added blackboard checkBB and setBB, with tests!
+
 2009-01-07 19:46  david.eyk
 
 	* [r27] ChangeLog, epydoc.config, src/owyl/blackboard.py,

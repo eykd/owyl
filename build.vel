@@ -95,6 +95,6 @@ targets(
     update [$ rm -f ./ez_setup.py
             $ wget http://peak.telecommunity.com/dist/ez_setup.py
             ]
-    upload_docs [$ rsync -avz --delete docs/html/api/ eykd.net:/home/eykd/webapps/net_eykd_worlds__static/owyl/api/
+    upload_docs [$ rsync -avz --delete docs/html/api/ eykd@eykd.net:/home/eykd/webapps/net_eykd_worlds__static/owyl/api/
                  ]
     )
