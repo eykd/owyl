@@ -13,19 +13,20 @@ Owyl has been tested on python 2.5. It will probably work on 2.4 and
 2.6. Please let me know if you have any trouble with it.
 
 David Eyk
-eykd@eykd.net
+owyl@eykd.net
+
+
+Problems? Questions?
+====================
+
+If you run into trouble, or have a question, visit the discussion
+group at <http://groups.google.com/group/owyl-discuss/>.
 
 
 Installation
 ============
 
-Install Owyl using the standard distutils method:
-
-  $ python setup.py install
-
-Owyl can also be installed with easy_install:
-
- $ easy_install owyl
+See INSTALL.
 
 
 Documentation
@@ -37,18 +38,3 @@ For more information about Owyl, please visit the project site at
 <http://code.google.com/p/owyl/>.
 
 
-Development and Testing
-=======================
-
-To develop and test Owyl, use buildout to set up your environment:
-
-  $ python bootstrap.py
-  $ ./bin/buildout
-  $ ./bin/nosetests -vxd
-
-Everything's a little easier if you use `Vellum
-<https://launchpad.net/vellum/>`_.
-
-  $ vellum test
-
-Hopefully, you'll find Owyl easy to work with and adapt.

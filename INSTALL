@@ -1,0 +1,50 @@
+=================
+ Installing Owyl
+=================
+
+Install Owyl using the standard distutils method:
+
+  $ python setup.py install
+
+Owyl can also be installed with easy_install:
+
+  $ easy_install owyl
+
+
+Egenix mxBase
+=============
+
+Owyl will use mx.Stack if it is available. Otherwise, it uses a
+regular list to emulate a stack. mx.Stack should offer a small
+performance boost.
+
+Egenix mxBase can be found and downloaded at
+<http://www.egenix.com/products/python/mxBase/>.
+
+
+Development and Testing
+=======================
+
+To develop and test Owyl, use buildout to set up your environment:
+
+  $ python bootstrap.py
+  $ ./bin/buildout
+  $ ./bin/nosetests -vxd
+
+Everything's a little easier if you use `Vellum
+<https://launchpad.net/vellum/>`_.
+
+  $ vellum test
+
+Note: If you want to use vellum, the various 'clean' targets require
+remove.py, which you will find in the root distribution folder. Copy
+it somewhere on your PYTHON_PATH, and vellum won't complain.
+
+
+Thanks
+======
+
+Thanks for trying out Owyl. Hopefully, you'll find Owyl easy to work
+with and adapt. Please visit the discussion board at
+<http://groups.google.com/group/owyl-discuss/> if you run into any
+trouble.

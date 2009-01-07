@@ -1,3 +1,13 @@
+Improved packaging.
+
+ * Bumped future version to 0.2.2
+
+ * Removed dependency on mx.Stack
+ * Removed pyflakes dependency from buildout.cfg.
+
+ * Moved installation instructions to INSTALL.
+ * Added note about mx.Stack.
+ * Added note about remove.py for vellum.
 Added alternate stack implementation if mx.Stack is not available.
 
 2009-01-06 04:19  david.eyk
