@@ -33,14 +33,14 @@ targets(
               $ ./bin/buildout -o
               ]
     changelog [$ svn up
-               $ svn2cl
+               $ svn2cl --include-rev --include-actions
                ]
     ci [$ touch CHANGES
         $ echo '' >> CHANGES
         $ cat CHANGES|cat - ChangeLog > /tmp/out && mv /tmp/out ChangeLog
         $ svn ci --force-log -F ./CHANGES
         $ svn up
-        $ svn2cl
+        $ svn2cl --include-rev --include-actions
         $ rm ./CHANGES
         $ touch CHANGES
         ]

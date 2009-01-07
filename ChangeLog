@@ -1,104 +1,125 @@
-Improved packaging.
+New decorators.
 
- * Bumped future version to 0.2.2
+ * Removed src/__init__.py as unnecessary.
+ * Adde throw and catch to owyl.core.
+ * Added new decorators (untested).
+   * repeatUntilFail
+   * repeatUntilSucceed
+ * core: changed *args to *children
+ * Fixed some epytext tags.
+2009-01-07 02:26  david.eyk
 
- * Removed dependency on mx.Stack
- * Removed pyflakes dependency from buildout.cfg.
+	* [r22] ChangeLog, INSTALL, README, buildout.cfg, setup.py:
+	  Improved packaging.
+	  
+	  * Bumped future version to 0.2.2
+	  
+	  * Removed dependency on mx.Stack
+	  * Removed pyflakes dependency from buildout.cfg.
+	  
+	  * Moved installation instructions to INSTALL.
+	  * Added note about mx.Stack.
+	  * Added note about remove.py for vellum.
 
- * Moved installation instructions to INSTALL.
- * Added note about mx.Stack.
- * Added note about remove.py for vellum.
-Added alternate stack implementation if mx.Stack is not available.
+2009-01-06 04:43  david.eyk
+
+	* [r20] ChangeLog, setup.py, src/owyl/core.py, src/owyl/stack.py:
+	  Added alternate stack implementation if mx.Stack is not
+	  available.
 
 2009-01-06 04:19  david.eyk
 
-	* ChangeLog, setup.py: Bumped future version to 0.2.1
+	* [r19] ChangeLog, setup.py: Bumped future version to 0.2.1
 
 2009-01-06 04:18  david.eyk
 
-	* ChangeLog, build.vel, epydoc.config, upload_to_google.sh: Folded
-	  0.2 release changes back into trunk.
+	* [r18] ChangeLog, build.vel, epydoc.config, upload_to_google.sh:
+	  Folded 0.2 release changes back into trunk.
 
 2009-01-06 02:57  david.eyk
 
-	* ChangeLog, build.vel: Finally perfected the ci target. I'll stop
-	  spamming the ChangeLog now.
+	* [r15] ChangeLog, build.vel: Finally perfected the ci target. I'll
+	  stop spamming the ChangeLog now.
 
 2009-01-06 02:54  david.eyk
 
-	* ChangeLog, build.vel: One more tweak to ci target.
+	* [r14] ChangeLog, build.vel: One more tweak to ci target.
 
 2009-01-06 02:51  david.eyk
 
-	* CHANGES, ChangeLog, build.vel: Removed CHANGES file. Going with
-	  ChangeLog only.
+	* [r13] CHANGES[DEL], ChangeLog, build.vel: Removed CHANGES file.
+	  Going with ChangeLog only.
 
 2009-01-06 02:45  david.eyk
 
-	* CHANGES, ChangeLog, build.vel: Added ChangeLog; tweaked ci
+	* [r12] CHANGES, ChangeLog, build.vel: Added ChangeLog; tweaked ci
 	  target.
 
 2009-01-06 02:42  david.eyk
 
-	* CHANGES, build.vel, remove.py: Improvements to build.vel; added
-	  remove for vellum.
+	* [r11] CHANGES, build.vel, remove.py: Improvements to build.vel;
+	  added remove for vellum.
 	  
 	  * Fixed test dependencies and API uploader.
 	  * Added release_dist command, improved dependencies.
 
 2009-01-06 02:31  david.eyk
 
-	* CHANGES, LICENSE, README, TODO: Updated properties one more time.
+	* [r10] CHANGES, LICENSE, README, TODO: Updated properties one more
+	  time.
 
 2009-01-06 02:29  david.eyk
 
-	* CHANGES, LICENSE, README, TODO, build.vel: Added README and TODO
-	  list. Fixed build.vel.
+	* [r9] CHANGES, LICENSE, README, TODO, build.vel: Added README and
+	  TODO list. Fixed build.vel.
 
 2009-01-06 02:12  david.eyk
 
-	* src/owyl/__init__.py: Added properties to owil.__init__
+	* [r8] src/owyl/__init__.py: Added properties to owil.__init__
 
 2009-01-06 02:12  david.eyk
 
-	* buildout.cfg, setup.py, src/owyl/__init__.py: Adjusted
+	* [r7] buildout.cfg, setup.py, src/owyl/__init__.py: Adjusted
 	  setup/build files to reflect project details.
 
 2009-01-06 01:18  david.eyk
 
-	* build.vel, epydoc.config, googlecode_upload.py, src/owyl/core.py,
-	  tests/testowyl.py: Updated keywords and ignores.
+	* [r6] build.vel, epydoc.config, googlecode_upload.py,
+	  src/owyl/core.py, tests/testowyl.py: Updated keywords and
+	  ignores.
 
 2009-01-06 01:17  david.eyk
 
-	* build.vel, buildout.cfg, epydoc.config, ez_setup.py,
-	  googlecode_upload.py, setup.cfg, setup.py, src/owyl/__init__.py,
-	  src/owyl/base.py, src/owyl/core.py, src/owyl/decorators.py,
-	  src/owyl/memory.py, src/owyl/movement.py, src/owyl/structure.py,
-	  tests/testai.py, tests/testowyl.py: Completely new codebase, with
-	  a new interface. More to follow.
+	* [r5] build.vel, buildout.cfg, epydoc.config, ez_setup.py,
+	  googlecode_upload.py, setup.cfg, setup.py,
+	  src/owyl/__init__.py[DEL], src/owyl/base.py[DEL],
+	  src/owyl/core.py, src/owyl/decorators.py,
+	  src/owyl/memory.py[DEL], src/owyl/movement.py[DEL],
+	  src/owyl/structure.py[DEL], tests/testai.py[DEL],
+	  tests/testowyl.py: Completely new codebase, with a new interface.
+	  More to follow.
 
 2008-04-08 15:42  david.eyk
 
-	* ., .svnignore, .svnkeywords, bootstrap.py, buildout.cfg,
+	* [r4] ., .svnignore, .svnkeywords, bootstrap.py, buildout.cfg,
 	  ez_setup.py, setup.cfg, setup.py, src, src/__init__.py, src/owyl,
-	  src/owyl/__init__.py, src/owyl/ai.py, src/owyl/base.py,
+	  src/owyl/__init__.py, src/owyl/ai.py[DEL], src/owyl/base.py,
 	  src/owyl/decorators.py, src/owyl/memory.py, src/owyl/movement.py,
 	  src/owyl/structure.py, tests, tests/testai.py, update-properties:
 	  Broke ai into components. Imports not yet filled in.
 
 2008-04-08 02:56  david.eyk
 
-	* bootstrap.py, buildout.cfg, ez_setup.py, setup.cfg, setup.py,
-	  src/__init__.py, src/owyl/__init__.py, src/owyl/ai.py, tests,
-	  tests/testai.py: Project packaging.
+	* [r3] bootstrap.py, buildout.cfg, ez_setup.py, setup.cfg,
+	  setup.py, src/__init__.py, src/owyl/__init__.py, src/owyl/ai.py,
+	  tests, tests/testai.py: Project packaging.
 
 2008-04-07 16:13  david.eyk
 
-	* src, src/owyl, src/owyl/ai.py: Initial checkin of owyl pyweek6
-	  code.
+	* [r2] src, src/owyl, src/owyl/ai.py: Initial checkin of owyl
+	  pyweek6 code.
 
 2008-04-04 19:41  
 
-	* .: Initial directory structure.
+	* [r1] .: Initial directory structure.
 

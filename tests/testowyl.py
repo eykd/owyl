@@ -18,7 +18,7 @@ import unittest
 
 import owyl
 
-class OwylTest(unittest.TestCase):
+class OwylCoreTests(unittest.TestCase):
     def testSucceed(self):
         """Can we succeed?
         """
@@ -181,7 +181,93 @@ class OwylTest(unittest.TestCase):
         results =  [x for x in v if x is not None]
         self.assertEqual(results, [False,])
 
+    def testThrow(self):
+        """Can we throw an exception within the tree?
+        """
+        tree = owyl.sequence(owyl.succeed(),
+                             owyl.succeed(),
+                             owyl.throw(throws=ValueError,
+                                        throws_message="AUGH!!"),
+                             )
+        v = owyl.visit(tree)
+        self.assertEqual(v.next(), True)
+        self.assertEqual(v.next(), True)
+        self.assertRaises(ValueError, v.next)
 
+        v = owyl.visit(tree)
+        self.assertEqual(v.next(), True)
+        self.assertEqual(v.next(), True)
+        self.assertRaises(ValueError, v.next)
+
+    def testCatch(self):
+        """Can we catch an exception thrown within the tree?
+        """
+        tree = owyl.sequence(owyl.succeed(),
+                             owyl.succeed(),
+                             owyl.catch(owyl.throw(throws=ValueError,
+                                                   throws_message="AUGH!!"),
+                                        caught=ValueError, 
+                                        branch=owyl.succeed())
+                             )
+        v = owyl.visit(tree)
+        self.assertEqual(v.next(), True)
+        self.assertEqual(v.next(), True)
+        self.assertEqual(v.next(), True)
+
+        v = owyl.visit(tree)
+        self.assertEqual(v.next(), True)
+        self.assertEqual(v.next(), True)
+        self.assertEqual(v.next(), True)
+
+    def testCatchIgnoresOthers(self):
+        """Does catch ignore other exceptions thrown within the tree?
+        """
+        tree = owyl.sequence(owyl.succeed(),
+                             owyl.succeed(),
+                             owyl.catch(owyl.throw(throws=ValueError,
+                                                   throws_message="AUGH!!"),
+                                        caught=IndexError, 
+                                        branch=owyl.succeed())
+                             )
+        v = owyl.visit(tree)
+        self.assertEqual(v.next(), True)
+        self.assertEqual(v.next(), True)
+        self.assertRaises(ValueError, v.next)
+
+        v = owyl.visit(tree)
+        self.assertEqual(v.next(), True)
+        self.assertEqual(v.next(), True)
+        self.assertRaises(ValueError, v.next)
+
+    
+class OwylDecoratorTests(unittest.TestCase):
+    def testIdentity(self):
+        """Does identity pass on return values unchanged?
+        """
+        after = 5
+        tree = owyl.identity(owyl.succeedAfter(after=after))
+
+        v = owyl.visit(tree)
+        for x in xrange(after):
+            self.assertEqual(v.next(), None)
+        self.assertEqual(v.next(), True)
+
+        v = owyl.visit(tree)
+        for x in xrange(after):
+            self.assertEqual(v.next(), None)
+        self.assertEqual(v.next(), True)
+
+        tree = owyl.identity(owyl.failAfter(after=after))
+
+        v = owyl.visit(tree)
+        for x in xrange(after):
+            self.assertEqual(v.next(), None)
+        self.assertEqual(v.next(), False)
+
+        v = owyl.visit(tree)
+        for x in xrange(after):
+            self.assertEqual(v.next(), None)
+        self.assertEqual(v.next(), False)
 
 if __name__ == "__main__":
     import testoob

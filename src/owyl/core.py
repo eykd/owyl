@@ -12,6 +12,8 @@ __author__ = "$Author$"[9:-2]
 __revision__ = "$Rev$"[6:-2]
 __date__ = "$Date$"[7:-2]
 
+import sys
+
 try:
     from mx.Stack import Stack, EmptyError
 except ImportError:
@@ -25,10 +27,10 @@ def task(func):
     Decorate a generator function to produce a re-usable generator
     factory for the given task.
     """
-    def initTask(*args, **initkwargs):
+    def initTask(*children, **initkwargs):
         def makeIterator(**runkwargs):
             runkwargs.update(initkwargs)
-            iterator = func(*args, **runkwargs)
+            iterator = func(*children, **runkwargs)
             return iterator
         makeIterator.__name__ = func.__name__
         makeIterator.__doc__ = func.__doc__
@@ -82,7 +84,7 @@ def visit(tree, **kwargs):
                 s.push((current, cur_name))
                 current, cur_name = (child(**kwargs), child.__name__)
                 #print "Descending into %s" % (cur_name,)
-                yield None
+                
         except StopIteration:
             try:
                 current, cur_name = s.pop()
@@ -91,11 +93,11 @@ def visit(tree, **kwargs):
             except EmptyError:
                 raise StopIteration
         except Exception, e:
-            exc = e.__class__(*e.args)
+            exc = e.__class__
             try:
                 # Give the parent task a chance to handle the exception.
                 current, cur_name = s.pop()
-                current.throw(exc)
+                current.throw(exc, e.message, sys.exc_info()[2])()
             except EmptyError:
                 # Give up if the exception has propagated all the way
                 # up the tree:
@@ -115,7 +117,36 @@ def fail(**kwargs):
     yield False
 
 @task
-def sequence(*args, **kwargs):
+def succeedAfter(**kwargs):
+    """Succeed after a given number of iterations.
+
+    Yields 'None' 'after' times.
+
+    @keyword after: How many iterations to succeed after.
+    @type after: int
+    """
+    after = kwargs.pop('after', 1)
+    for x in xrange(after):
+        yield None
+    yield True
+
+@task
+def failAfter(**kwargs):
+    """Fail after a given number of iterations.
+
+    Yields 'None' 'after' times.
+
+    @keyword after: How many iterations to fail after.
+    @type after: int
+    """
+    after = kwargs.pop('after', 1)
+    for x in xrange(after):
+        yield None
+    yield False
+
+
+@task
+def sequence(*children, **kwargs):
     """Run tasks in sequence until one fails.
 
     The sequence will run each task in sequence until one fails,
@@ -125,16 +156,16 @@ def sequence(*args, **kwargs):
     U{http://aigamedev.com/hierarchical-logic/sequence}.
     """
     final_value = True
-    for child in args:
-        result = (yield child)
-        if not result:
+    for child in children:
+        result = yield child
+        if not result and result is not None:
             final_value = False
             break
-        yield None
+        
     yield final_value
 
 @task
-def selector(*args, **kwargs):
+def selector(*children, **kwargs):
     """Run tasks in sequence until one succeeds.
 
     The selector will run each task in sequence until one succeeds,
@@ -143,15 +174,15 @@ def selector(*args, **kwargs):
     For more information, see the discussion at
     U{http://aigamedev.com/hierarchical-logic/selector}.
 
-    @param *args: tasks to run in sequence as children.
+    @param *children: tasks to run in sequence as children.
     """
     final_value = False
-    for child in args:
+    for child in children:
         result = (yield child)
         if result:
             final_value = True
             break
-        yield None
+        
     yield final_value
 
 
@@ -173,7 +204,7 @@ class PARALLEL_SUCCESS(Enum):
     REQUIRE_ONE = "ONE"
 
 @task
-def parallel(*args, **kwargs):
+def parallel(*children, **kwargs):
     """Run tasks in parallel until the success policy is fulfilled or broken.
 
     If the success policy is met, return a success. If the policy is
@@ -182,9 +213,9 @@ def parallel(*args, **kwargs):
     For more information, see the discussion at
     U{aigamedev.com/hierarchical-logic/parallel}.
 
-    @param *args: tasks to run in parallel as children.
+    @param *children: tasks to run in parallel as children.
 
-    @param policy: The success policy. All must succeed, 
+    @keyword policy: The success policy. All must succeed, 
                    or only one must succeed.
     @type policy: C{PARALLEL_SUCCESS.REQUIRE_ALL} or 
                   C{PARALLEL_SUCCESS.REQUIRE_ONE}.
@@ -192,7 +223,7 @@ def parallel(*args, **kwargs):
     return_values = (True, False)
     policy = kwargs.pop('policy', PARALLEL_SUCCESS.REQUIRE_ONE)
     all_must_succeed = (policy == PARALLEL_SUCCESS.REQUIRE_ALL)
-    visits = [visit(arg, **kwargs) for arg in args]
+    visits = [visit(arg, **kwargs) for arg in children]
     final_value = True
     while True:
         try:
@@ -208,7 +239,7 @@ def parallel(*args, **kwargs):
                         break
                     else:
                         final_value = result
-                yield None
+                
         except StopIteration:
             break
     yield final_value
@@ -217,11 +248,11 @@ def parallel(*args, **kwargs):
 def throw(**kwargs):
     """Throw (raise) an exception.
 
-    @param throws: An Exception to throw.
+    @keyword throws: An Exception to throw.
     @type throws: C{Exception}
 
-    @param throws_message: Text to instantiate C{throws} with.
-    @param throws_message: C{str}
+    @keyword throws_message: Text to instantiate C{throws} with.
+    @type throws_message: C{str}
     """
     throws = kwargs.pop('throws', Exception)
     throws_message = kwargs.pop('throws_message', '')
@@ -230,4 +261,29 @@ def throw(**kwargs):
             return self
         def next(self):
             raise throws(throws_message)
-    return gen
+    return gen()
+
+@task
+def catch(child, **kwargs):
+    """Catch a raised exception from child and run an alternate branch.
+
+    Note: this will not catch exceptions raised in the branch.
+
+    @keyword caught: An Exception to catch.
+    @type caught: C{Exception}
+
+    @keyword branch: An alternate tree to visit when caught.
+    """
+    caught = kwargs.pop('caught', Exception)
+    branch = kwargs.pop('branch', fail())
+    
+    result = None
+    try:
+        while result is None:
+            result = (yield child)
+    except caught, e:
+        print "catch: caught %s. (Expected %s.) Entering branch." % (e, 
+                                                                     caught)
+        while result is None:
+            result = (yield branch)
+    yield result

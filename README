@@ -9,8 +9,9 @@ The goal of Owyl: provide a fast and flexible Behavior Tree library
 implemented in python. For more information on Behavior Trees, see
 the articles at <http://aigamedev.com/hierarchical-logic>.
 
-Owyl has been tested on python 2.5. It will probably work on 2.4 and
-2.6. Please let me know if you have any trouble with it.
+Owyl has been tested on python 2.5. It will probably work on 2.6. It
+definitely WILL NOT work on 2.4. Please let me know if you have any
+trouble with it.
 
 David Eyk
 owyl@eykd.net

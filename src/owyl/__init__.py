@@ -68,3 +68,4 @@ __revision__ = "$Rev$"[6:-2]
 __date__ = "$Date$"[7:-2]
 
 from core import *
+from decorators import *

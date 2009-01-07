@@ -14,7 +14,7 @@ __author__ = "$Author$"[9:-2]
 __revision__ = "$Rev: 0 $"[6:-2]
 __date__ = "$Date: Today $"[7:-2]
 
-class EmptyError(Exception): pass
+EmptyError = IndexError
 
 class Stack(list):
     """A list with a push method.

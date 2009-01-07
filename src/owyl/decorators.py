@@ -17,8 +17,50 @@ __date__ = "$Date$"[7:-2]
 from core import task
 
 @task
-def identity(child):
+def identity(child, **kwargs):
     """Transparent decorator. Pass yielded values from child unchanged.
     """
-    while True:
-        yield child.next()
+    result = None
+    while result is None:
+        result = (yield child)
+    yield result
+
+@task
+def repeatUntilFail(child, **kwargs):
+    """Repeatedly iterate over the child until it fails.
+
+    @keyword final_value: Value to return on failure.
+    @type final_value: C{True} or C{False}
+    """
+    final_value = kwargs.pop('final_value', False)
+    result = None
+    while result is None:
+        try:
+            result = (yield child)
+            if result is False:
+                break
+            else:
+                result = None
+        except StopIteration:
+            result = None
+    yield final_value
+
+@task
+def repeatUntilSucceed(child, **kwargs):
+    """Repeatedly iterate over the child until it succeeds.
+
+    @keyword final_value: Value to return on failure.
+    @type final_value: C{True} or C{False}
+    """
+    final_value = kwargs.pop('final_value', True)
+    result = None
+    while result is None:
+        try:
+            result = (yield child)
+            if result is True:
+                break
+            else:
+                result = None
+        except StopIteration:
+            result = None
+    yield final_value
