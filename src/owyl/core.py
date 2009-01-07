@@ -17,7 +17,7 @@ import sys
 try:
     from mx.Stack import Stack, EmptyError
 except ImportError:
-    from .stack import Stack, EmptyError
+    from stack import Stack, EmptyError
 
 RETURN_VALUES = (True, False, None)
 
@@ -154,6 +154,8 @@ def sequence(*children, **kwargs):
 
     For more information, see the discussion at
     U{http://aigamedev.com/hierarchical-logic/sequence}.
+
+    @param children: tasks to run in sequence as children.
     """
     final_value = True
     for child in children:
@@ -174,7 +176,7 @@ def selector(*children, **kwargs):
     For more information, see the discussion at
     U{http://aigamedev.com/hierarchical-logic/selector}.
 
-    @param *children: tasks to run in sequence as children.
+    @param children: child tasks to select from.
     """
     final_value = False
     for child in children:
@@ -213,7 +215,7 @@ def parallel(*children, **kwargs):
     For more information, see the discussion at
     U{aigamedev.com/hierarchical-logic/parallel}.
 
-    @param *children: tasks to run in parallel as children.
+    @param children: tasks to run in parallel as children.
 
     @keyword policy: The success policy. All must succeed, 
                    or only one must succeed.

@@ -1,4 +1,9 @@
-Added blackboard functions (untested, as yet).
+Fixed some epydoc warnings.
+2009-01-07 13:52  david.eyk
+
+	* [r24] ChangeLog, src/owyl/blackboard.py: Added blackboard
+	  functions (untested, as yet).
+
 2009-01-07 04:43  david.eyk
 
 	* [r23] ChangeLog, README, build.vel, src/__init__.py[DEL],

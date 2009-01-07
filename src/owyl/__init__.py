@@ -38,13 +38,13 @@ Termination Status Values
   As mentioned, iterators in the tree may yield values of None, True,
   False, or a child iterator:
 
-  - B{None:} May be used to defer execution for another pass from the
-    scheduler. An iterator yielding None will be queried again.
+    - B{None:} May be used to defer execution for another pass from the
+      scheduler. An iterator yielding None will be queried again.
 
-  - B{True:} Termination value signalling successful execution.
+    - B{True:} Termination value signalling successful execution.
 
-  - B{False:} Termination value signalling unsuccessful execution, or
-    failure. Note: this is not considered an error value.
+    - B{False:} Termination value signalling unsuccessful execution, or
+      failure. Note: this is not considered an error value.
 
   True errors or exceptions should C{raise} the appropriate C{Error}
   or C{Exception}.
