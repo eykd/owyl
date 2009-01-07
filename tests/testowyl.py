@@ -285,7 +285,57 @@ class OwylTests(unittest.TestCase):
             self.assertEqual(v.next(), None)
         self.assertEqual(v.next(), False)
 
+    def testCheckBB(self):
+        """Can we check a value on a blackboard?
+        """
+        value = "foo"
+        checker = lambda x: x == value
 
+        bb = blackboard.Blackboard(value=value)
+        tree = blackboard.checkBB(key='value',
+                                  check=checker)
+        
+        # Note that we can pass in the blackboard at run-time.
+        v = owyl.visit(tree, blackboard=bb)
+
+        # Check should succeed.
+        self.assertEqual(v.next(), True)
+
+        v = owyl.visit(tree, blackboard=bb)
+        self.assertEqual(v.next(), True)
+
+        bb['value'] = 'bar'
+
+        # Check should now fail.
+        v = owyl.visit(tree, blackboard=bb)
+        self.assertEqual(v.next(), False)
+
+        v = owyl.visit(tree, blackboard=bb)
+        self.assertEqual(v.next(), False)
+
+    def testSetBB(self):
+        """Can we set a value on a blackboard?
+        """
+        value = 'foo'
+        checker = lambda x: x == value
+
+        bb = blackboard.Blackboard(value='bar')
+        tree = owyl.sequence(blackboard.setBB(key="value",
+                                              value=value),
+                             blackboard.checkBB(key='value',
+                                                check=checker)
+                             )
+        
+        # Note that we can pass in the blackboard at run-time.
+        v = owyl.visit(tree, blackboard=bb)
+
+        # Sequence will succeed if the check succeeds.
+        result = [x for x in v][-1]
+        self.assertEqual(result, True)
+
+        v = owyl.visit(tree, blackboard=bb)
+        result = [x for x in v][-1]
+        self.assertEqual(result, True)
         
 
 if __name__ == "__main__":

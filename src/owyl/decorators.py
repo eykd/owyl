@@ -18,7 +18,7 @@ import core
 
 __all__ = ['identity', 'repeatUntilFail', 'repeatUntilSucceed']
 
-@core.task
+@core.parent_task
 def identity(child, **kwargs):
     """Transparent decorator. Pass yielded values from child unchanged.
     """
@@ -27,7 +27,7 @@ def identity(child, **kwargs):
         result = (yield child)
     yield result
 
-@core.task
+@core.parent_task
 def repeatUntilFail(child, **kwargs):
     """Repeatedly iterate over the child until it fails.
 
@@ -47,7 +47,7 @@ def repeatUntilFail(child, **kwargs):
             result = None
     yield final_value
 
-@core.task
+@core.parent_task
 def repeatUntilSucceed(child, **kwargs):
     """Repeatedly iterate over the child until it succeeds.
 

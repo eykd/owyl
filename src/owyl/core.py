@@ -31,6 +31,26 @@ def task(func):
     Decorate a generator function to produce a re-usable generator
     factory for the given task.
     """
+    def initTask(**initkwargs):
+        def makeIterator(**runkwargs):
+            runkwargs.update(initkwargs)
+            iterator = func(**runkwargs)
+            return iterator
+        makeIterator.__name__ = func.__name__
+        makeIterator.__doc__ = func.__doc__
+        return makeIterator
+    initTask.__doc__ = func.__doc__
+    initTask.__name__ = func.__name__
+    return initTask
+
+def parent_task(func):
+    """Parent task decorator.
+
+    A parent task is a task that accepts children.
+
+    Decorate a generator function to produce a re-usable generator
+    factory for the given task.
+    """
     def initTask(*children, **initkwargs):
         def makeIterator(**runkwargs):
             runkwargs.update(initkwargs)
@@ -102,11 +122,10 @@ def visit(tree, **kwargs):
                 # Give the parent task a chance to handle the exception.
                 current, cur_name = s.pop()
                 current.throw(exc, e.message, sys.exc_info()[2])()
-            except EmptyError:
+            except EmptyError, e:
                 # Give up if the exception has propagated all the way
                 # up the tree:
-                raise exc
-
+                raise e
         
 @task
 def succeed(**kwargs):
@@ -149,7 +168,7 @@ def failAfter(**kwargs):
     yield False
 
 
-@task
+@parent_task
 def sequence(*children, **kwargs):
     """Run tasks in sequence until one fails.
 
@@ -170,7 +189,7 @@ def sequence(*children, **kwargs):
         
     yield final_value
 
-@task
+@parent_task
 def selector(*children, **kwargs):
     """Run tasks in sequence until one succeeds.
 
@@ -209,7 +228,7 @@ class PARALLEL_SUCCESS(Enum):
     REQUIRE_ALL = "ALL"
     REQUIRE_ONE = "ONE"
 
-@task
+@parent_task
 def parallel(*children, **kwargs):
     """Run tasks in parallel until the success policy is fulfilled or broken.
 
@@ -248,6 +267,8 @@ def parallel(*children, **kwargs):
                 
         except StopIteration:
             break
+        except EmptyError:
+            break
     yield final_value
 
 @task
@@ -269,7 +290,7 @@ def throw(**kwargs):
             raise throws(throws_message)
     return gen()
 
-@task
+@parent_task
 def catch(child, **kwargs):
     """Catch a raised exception from child and run an alternate branch.
 
@@ -288,8 +309,6 @@ def catch(child, **kwargs):
         while result is None:
             result = (yield child)
     except caught, e:
-        print "catch: caught %s. (Expected %s.) Entering branch." % (e, 
-                                                                     caught)
         while result is None:
             result = (yield branch)
     yield result

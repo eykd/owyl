@@ -43,7 +43,7 @@ def checkBB(**kwargs):
     check = kwargs.get('check', lambda x: x is not None)
     value = bb[key]
     result = check(value) and True or False # Always return a boolean.
-    return result
+    yield result
 
 @core.task
 def setBB(**kwargs):
@@ -60,6 +60,6 @@ def setBB(**kwargs):
     key = kwargs['key']
     value = kwargs['value']
     bb[key] = value
-    return True
+    yield True
 
 

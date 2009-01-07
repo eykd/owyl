@@ -1,9 +1,16 @@
-Housekeeping.
+Many improvements.
 
- * Updated README, svn properties.
- * Added __all__ to modules so epydoc will recognize the decorated
-   functions.
+ * Differentiating between task and parent_task function decorators.
+ * Added blackboard checkBB and setBB, with tests!
+2009-01-07 19:46  david.eyk
 
+	* [r27] ChangeLog, epydoc.config, src/owyl/blackboard.py,
+	  src/owyl/core.py, src/owyl/decorators.py, src/owyl/stack.py:
+	  Housekeeping.
+	  
+	  * Updated README, svn properties.
+	  * Added __all__ to modules so epydoc will recognize the decorated
+	  functions.
 
 2009-01-07 15:15  david.eyk
 
