@@ -1,12 +1,18 @@
-New decorators.
+Added blackboard functions (untested, as yet).
+2009-01-07 04:43  david.eyk
 
- * Removed src/__init__.py as unnecessary.
- * Adde throw and catch to owyl.core.
- * Added new decorators (untested).
-   * repeatUntilFail
-   * repeatUntilSucceed
- * core: changed *args to *children
- * Fixed some epytext tags.
+	* [r23] ChangeLog, README, build.vel, src/__init__.py[DEL],
+	  src/owyl/__init__.py, src/owyl/core.py, src/owyl/decorators.py,
+	  src/owyl/stack.py, tests/testowyl.py: New decorators.
+	  
+	  * Removed src/__init__.py as unnecessary.
+	  * Adde throw and catch to owyl.core.
+	  * Added new decorators (untested).
+	  * repeatUntilFail
+	  * repeatUntilSucceed
+	  * core: changed *args to *children
+	  * Fixed some epytext tags.
+
 2009-01-07 02:26  david.eyk
 
 	* [r22] ChangeLog, INSTALL, README, buildout.cfg, setup.py:
