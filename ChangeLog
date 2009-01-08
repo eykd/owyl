@@ -1,4 +1,8 @@
-Added user to upload_docs.
+Worked on repeatUntilSucceed and repeatUntilFail, but both still broken.
+
+2009-01-07 22:38  david.eyk
+
+	* [r29] ChangeLog, build.vel: Added user to upload_docs.
 
 2009-01-07 22:35  david.eyk
 

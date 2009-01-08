@@ -15,16 +15,18 @@ __revision__ = "$Rev$"[6:-2]
 __date__ = "$Date$"[7:-2]
 
 
+from collections import defaultdict
+
 import core
 
 __all__ = ['checkBB', 'setBB',]
 
-class Blackboard(dict):
+class Blackboard(defaultdict):
     """A dict that defaults values to None.
     """
     def __init__(self, **kwargs):
-        super(Blackboard, self).__init__(**kwargs)
-        self.setdefault(None)
+        default = lambda: None
+        super(Blackboard, self).__init__(default, **kwargs)
 
 @core.task
 def checkBB(**kwargs):

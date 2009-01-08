@@ -122,7 +122,7 @@ def visit(tree, **kwargs):
                 # Give the parent task a chance to handle the exception.
                 current, cur_name = s.pop()
                 current.throw(exc, e.message, sys.exc_info()[2])()
-            except EmptyError, e:
+            except EmptyError:
                 # Give up if the exception has propagated all the way
                 # up the tree:
                 raise e

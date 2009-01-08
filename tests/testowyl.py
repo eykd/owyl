@@ -16,6 +16,7 @@ import unittest
 
 import owyl
 from owyl import blackboard
+from owyl import decorators
 
 class OwylTests(unittest.TestCase):
     """Tests for Owyl.
@@ -336,7 +337,66 @@ class OwylTests(unittest.TestCase):
         v = owyl.visit(tree, blackboard=bb)
         result = [x for x in v][-1]
         self.assertEqual(result, True)
-        
+
+    def testRepeatUntilSucceed(self):
+        """Can we repeat a behavior until it succeeds?
+        """
+        bb = blackboard.Blackboard() # 'value' defaults to None.
+        checker = lambda x: x is not None
+
+        parallel = owyl.parallel
+        repeat = owyl.repeatUntilSucceed
+        sequence = owyl.sequence
+        checkBB = blackboard.checkBB
+        setBB = blackboard.setBB
+
+        tree = parallel(repeat(checkBB(key='value',
+                                       check=checker),
+                               final_value=True),
+                        owyl.selector(owyl.fail(),
+                                      owyl.fail(),
+                                      setBB(key='value',
+                                            value='foo')),
+                        policy=owyl.PARALLEL_SUCCESS.REQUIRE_ALL)
+
+        v = owyl.visit(tree, blackboard=bb)
+        result = [x for x in v][-1]
+        self.assertEqual(result, True)
+
+        v = owyl.visit(tree, blackboard=bb)
+        result = [x for x in v][-1]
+        self.assertEqual(result, True)
+
+
+    def testRepeatUntilFail(self):
+        """Can we repeat a behavior until it fails?
+        """
+        bb = blackboard.Blackboard(value="foo")
+        checker = lambda x: x and True or False # must eval to True
+
+        parallel = owyl.parallel
+        repeat = owyl.repeatUntilFail
+        sequence = owyl.sequence
+        flip = decorators.flip # 'NOT' operator
+        checkBB = blackboard.checkBB
+        setBB = blackboard.setBB
+
+        tree = parallel(flip(repeat(checkBB(key='value',
+                                            check=checker),
+                                    final_value=True)),
+                        owyl.selector(owyl.fail(),
+                                      owyl.fail(),
+                                      setBB(key='value',
+                                            value=None)),
+                        policy=owyl.PARALLEL_SUCCESS.REQUIRE_ALL)
+
+        v = owyl.visit(tree, blackboard=bb)
+        result = [x for x in v][-1]
+        self.assertEqual(result, True)
+
+        v = owyl.visit(tree, blackboard=bb)
+        result = [x for x in v][-1]
+        self.assertEqual(result, True)
 
 if __name__ == "__main__":
     runner = unittest

@@ -28,6 +28,16 @@ def identity(child, **kwargs):
     yield result
 
 @core.parent_task
+def flip(child, **kwargs):
+    """NOT decorator. Pass yielded values from child with the boolean flipped.
+    """
+    result = None
+    while result is None:
+        result = (yield child)
+    yield not result
+
+
+@core.parent_task
 def repeatUntilFail(child, **kwargs):
     """Repeatedly iterate over the child until it fails.
 
@@ -62,6 +72,7 @@ def repeatUntilSucceed(child, **kwargs):
             if result is True:
                 break
             else:
+                yield None # Yield to other tasks.
                 result = None
         except StopIteration:
             result = None
