@@ -1,6 +1,15 @@
-Tests pass for repeatUntilSucceed and repeatUntilFail.
+Added appropriate labels to google uploader.
 
-Worked on repeatUntilSucceed and repeatUntilFail, but both still broken.
+2009-01-08 16:30  david.eyk
+
+	* [r31] ChangeLog, src/owyl/decorators.py, tests/testowyl.py: Tests
+	  pass for repeatUntilSucceed and repeatUntilFail.
+
+2009-01-08 13:39  david.eyk
+
+	* [r30] ChangeLog, src/owyl/blackboard.py, src/owyl/core.py,
+	  src/owyl/decorators.py, tests/testowyl.py: Worked on
+	  repeatUntilSucceed and repeatUntilFail, but both still broken.
 
 2009-01-07 22:38  david.eyk
 
