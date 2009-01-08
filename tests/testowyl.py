@@ -50,7 +50,6 @@ class OwylTests(unittest.TestCase):
         self.assertRaises(StopIteration, t.next)
 
 
-
     def testVisitSequenceSuccess(self):
         """Can we visit a successful sequence?
         """
@@ -286,6 +285,7 @@ class OwylTests(unittest.TestCase):
             self.assertEqual(v.next(), None)
         self.assertEqual(v.next(), False)
 
+
     def testCheckBB(self):
         """Can we check a value on a blackboard?
         """
@@ -314,6 +314,7 @@ class OwylTests(unittest.TestCase):
         v = owyl.visit(tree, blackboard=bb)
         self.assertEqual(v.next(), False)
 
+
     def testSetBB(self):
         """Can we set a value on a blackboard?
         """
@@ -338,6 +339,7 @@ class OwylTests(unittest.TestCase):
         result = [x for x in v][-1]
         self.assertEqual(result, True)
 
+
     def testRepeatUntilSucceed(self):
         """Can we repeat a behavior until it succeeds?
         """
@@ -353,6 +355,8 @@ class OwylTests(unittest.TestCase):
         tree = parallel(repeat(checkBB(key='value',
                                        check=checker),
                                final_value=True),
+
+                        # That should fail until this sets the value:
                         owyl.selector(owyl.fail(),
                                       owyl.fail(),
                                       setBB(key='value',
@@ -360,11 +364,14 @@ class OwylTests(unittest.TestCase):
                         policy=owyl.PARALLEL_SUCCESS.REQUIRE_ALL)
 
         v = owyl.visit(tree, blackboard=bb)
-        result = [x for x in v][-1]
+        results = [x for x in v]
+        result = results[-1]
         self.assertEqual(result, True)
 
+        bb = blackboard.Blackboard() # 'value' defaults to None.
         v = owyl.visit(tree, blackboard=bb)
-        result = [x for x in v][-1]
+        results = [x for x in v]
+        result = results[-1]
         self.assertEqual(result, True)
 
 
@@ -381,9 +388,11 @@ class OwylTests(unittest.TestCase):
         checkBB = blackboard.checkBB
         setBB = blackboard.setBB
 
-        tree = parallel(flip(repeat(checkBB(key='value',
+        tree = parallel(repeat(checkBB(key='value',
                                             check=checker),
-                                    final_value=True)),
+                                    final_value=True),
+
+                        # That should succeed until this sets the value:
                         owyl.selector(owyl.fail(),
                                       owyl.fail(),
                                       setBB(key='value',
@@ -391,12 +400,16 @@ class OwylTests(unittest.TestCase):
                         policy=owyl.PARALLEL_SUCCESS.REQUIRE_ALL)
 
         v = owyl.visit(tree, blackboard=bb)
-        result = [x for x in v][-1]
+        results = [x for x in v]
+        result = results[-1]
         self.assertEqual(result, True)
 
+        bb = blackboard.Blackboard(value="foo")
         v = owyl.visit(tree, blackboard=bb)
-        result = [x for x in v][-1]
+        results = [x for x in v]
+        result = results[-1]
         self.assertEqual(result, True)
+
 
 if __name__ == "__main__":
     runner = unittest

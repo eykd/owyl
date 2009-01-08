@@ -52,6 +52,7 @@ def repeatUntilFail(child, **kwargs):
             if result is False:
                 break
             else:
+                yield None # Yield to other tasks.
                 result = None
         except StopIteration:
             result = None

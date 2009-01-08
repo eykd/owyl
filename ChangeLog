@@ -1,3 +1,5 @@
+Tests pass for repeatUntilSucceed and repeatUntilFail.
+
 Worked on repeatUntilSucceed and repeatUntilFail, but both still broken.
 
 2009-01-07 22:38  david.eyk
