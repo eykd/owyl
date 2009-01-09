@@ -31,6 +31,7 @@ from owyl import task, visit
 from owyl import parallel, sequence, selector
 
 
+@task
 def move(**kwargs):
     """Move the actor forward perpetually.
 
@@ -40,11 +41,12 @@ def move(**kwargs):
     bb = kwargs['blackboard']
     a = kwargs['actor']
     while True:
+        dt = bb['dt']
         r = radians(a.rotation)
         s = dt * a.speed
         a.x += sin(r) * s
         a.y += cos(r) * s
-        yield True
+        yield None
 
 
 class Boid(Sprite):
@@ -75,7 +77,8 @@ class Boid(Sprite):
         return visit(tree, blackboard=self.bb)
 
     def update(self, dt):
-        pass
+        self.bb['dt'] = dt
+        self.tree.next()
 
 class SpriteLayer(ScrollableLayer):
     is_event_handler = True
