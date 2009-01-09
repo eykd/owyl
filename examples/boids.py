@@ -14,10 +14,15 @@ __author__ = "$Author$"[9:-2]
 __revision__ = "$Rev: 0 $"[6:-2]
 __date__ = "$Date: Today $"[7:-2]
 
+import os
+
 import random
 from math import radians, sin, cos
 
 import pyglet
+pyglet.resource.path = [os.path.dirname(os.path.abspath(__file__)),]
+pyglet.resource.reindex()
+print pyglet.resource.path
 
 from cocos.director import director
 from cocos.actions import MoveTo, MoveBy, FadeIn

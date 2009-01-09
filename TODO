@@ -8,20 +8,12 @@ of the following:
 
  * Documentation improvements:
 
-   * some example usages in a separate "examples" folder would be
-     nice.
+   * some example usages in a separate "examples" folder should be the
+     next area of focus after basic functionality.
 
  * Extensions:
 
-   * More decorators. For example:
-
-     * repeatUntilFail
-
-     * repeatUntilSucceed
-
-     * flip -- a NOT operator
-
-     * log -- given a logging function compatible w/ logging module
+   * log -- given a logging function compatible w/ logging module
 
  * Profiling & optimizing
 

@@ -1,6 +1,13 @@
-Non-working boids example. :(
 
-Added appropriate labels to google uploader.
+
+ * Added some more comments to the tests.
+ * Updated TODO list.
+Fixed bug in parallel: never yielded until final value.
+
+2009-01-08 16:57  david.eyk
+
+	* [r32] ChangeLog, upload_to_google.sh: Added appropriate labels to
+	  google uploader.
 
 2009-01-08 16:30  david.eyk
 

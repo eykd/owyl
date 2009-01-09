@@ -368,6 +368,7 @@ class OwylTests(unittest.TestCase):
         result = results[-1]
         self.assertEqual(result, True)
 
+        # Need to reset the blackboard to get the same results.
         bb = blackboard.Blackboard() # 'value' defaults to None.
         v = owyl.visit(tree, blackboard=bb)
         results = [x for x in v]
@@ -404,6 +405,7 @@ class OwylTests(unittest.TestCase):
         result = results[-1]
         self.assertEqual(result, True)
 
+        # Need to reset the blackboard to get the same results.
         bb = blackboard.Blackboard(value="foo")
         v = owyl.visit(tree, blackboard=bb)
         results = [x for x in v]

@@ -264,7 +264,7 @@ def parallel(*children, **kwargs):
                         break
                     else:
                         final_value = result
-                
+                yield None
         except StopIteration:
             break
         except EmptyError:

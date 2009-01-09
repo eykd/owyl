@@ -30,6 +30,8 @@ def identity(child, **kwargs):
 @core.parent_task
 def flip(child, **kwargs):
     """NOT decorator. Pass yielded values from child with the boolean flipped.
+
+    Yielded values of "None" are passed unchanged.
     """
     result = None
     while result is None:
