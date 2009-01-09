@@ -1,8 +1,26 @@
+Updated properties.
 
+2009-01-09 15:46  david.eyk
 
- * Added some more comments to the tests.
- * Updated TODO list.
-Fixed bug in parallel: never yielded until final value.
+	* [r37] ChangeLog, TODO, examples/boids.py, src/owyl/core.py,
+	  src/owyl/decorators.py, tests/testowyl.py: * Added some more
+	  comments to the tests.
+	  * Updated TODO list.
+	  Fixed bug in parallel: never yielded until final value.
+
+2009-01-09 04:10  david.eyk
+
+	* [r36] examples/boids.py: boids still not working.
+
+2009-01-09 04:01  david.eyk
+
+	* [r35] ChangeLog, examples/boids.py[CPY],
+	  examples/example1.py[DEL]: Non-working boids example. :(
+
+2009-01-09 03:32  david.eyk
+
+	* [r34] examples, examples/example1.py, examples/triangle.png: A
+	  start at a boids demo.
 
 2009-01-08 16:57  david.eyk
 
