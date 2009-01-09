@@ -15,17 +15,37 @@ __revision__ = "$Rev: 0 $"[6:-2]
 __date__ = "$Date: Today $"[7:-2]
 
 import random
+from math import radians, sin, cos
 
 import pyglet
 
 from cocos.director import director
-from cocos.actions import MoveTo, MoveBy
+from cocos.actions import MoveTo, MoveBy, FadeIn
 from cocos.layer import Layer
 from cocos.scene import Scene
 from cocos.sprite import Sprite
 from cocos.tiles import ScrollableLayer, ScrollingManager
 
 from owyl import blackboard
+from owyl import task, visit
+from owyl import parallel, sequence, selector
+
+
+def move(**kwargs):
+    """Move the actor forward perpetually.
+
+    @keyword dt: delta time
+    @keyword actor: actor to move
+    """
+    bb = kwargs['blackboard']
+    a = kwargs['actor']
+    while True:
+        r = radians(a.rotation)
+        s = dt * a.speed
+        a.x += sin(r) * s
+        a.y += cos(r) * s
+        yield True
+
 
 class Boid(Sprite):
     _img = pyglet.resource.image('triangle.png')
@@ -41,21 +61,33 @@ class Boid(Sprite):
         self.schedule(self.update)
         self.bb = blackboard
         self.boids.append(self)
+        self.opacity = 0
+        self.do(FadeIn(2))
+        self.speed = 20
+
+        self.tree = self.buildTree()
+
+    def buildTree(self):
+        """Build the behavior tree.
+        """
+        tree = parallel(move(actor=self),
+                        )
+        return visit(tree, blackboard=self.bb)
 
     def update(self, dt):
         pass
 
-
 class SpriteLayer(ScrollableLayer):
     is_event_handler = True
     
-    def __init__(self:
+    def __init__(self):
         super(SpriteLayer, self).__init__()
         self.manager = ScrollingManager()
         self.manager.add(self)
         self.active = None
         self.schedule(self.update)
         self.blackboard = blackboard.Blackboard()
+
 
     def makeBoids(self, how_many):
         boids = []
@@ -76,8 +108,6 @@ class SpriteLayer(ScrollableLayer):
         self.active = boid
 
         boid.position = 320, 200
-        move = MoveBy((150,0), 3)
-        boid.do(move)
 
 
     def update(self, dt):
@@ -85,6 +115,6 @@ class SpriteLayer(ScrollableLayer):
         self.manager.set_focus(x, y)
 
 if __name__ == "__main__":
-    director.init(resizable=True, caption="Owyl Behavior Tree Demo 1")
+    director.init(resizable=True, caption="Owyl Behavior Tree Demo: Boids")
     s = Scene(SpriteLayer())
     director.run(s)
