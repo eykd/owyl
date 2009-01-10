@@ -1,4 +1,16 @@
-Updated properties.
+
+
+ * parallel now runs each child once per iteration.
+
+
+
+
+ * parallel now runs each child once per iteration.
+
+2009-01-09 15:47  david.eyk
+
+	* [r38] ChangeLog, examples, examples/boids.py,
+	  examples/triangle.png: Updated properties.
 
 2009-01-09 15:46  david.eyk
 

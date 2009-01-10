@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-"""example1 -- Example 1 of Owyl behavior trees.
+"""boids -- Boids implementation using Owyl behavior trees.
 
-
+Note: this demo requires Pyglet, Rabbyt, and cocos2d.
 
 Copyright 2008 David Eyk. All rights reserved.
 
@@ -17,7 +17,13 @@ __date__ = "$Date$"[7:-2]
 import os
 
 import random
-from math import radians, sin, cos
+from math import radians, degrees, sin, cos, pi
+pi_2 = pi/2.0
+
+from operator import attrgetter, itemgetter
+getX = attrgetter('x')
+getY = attrgetter('y')
+getR = attrgetter('rotation')
 
 import pyglet
 pyglet.resource.path = [os.path.dirname(os.path.abspath(__file__)),]
@@ -35,24 +41,58 @@ from owyl import blackboard
 from owyl import task, visit
 from owyl import parallel, sequence, selector
 
+from rabbyt.collisions import collide_single
 
 @task
 def move(**kwargs):
     """Move the actor forward perpetually.
 
-    @keyword dt: delta time
     @keyword actor: actor to move
     """
     bb = kwargs['blackboard']
     a = kwargs['actor']
     while True:
         dt = bb['dt']
-        r = radians(a.rotation)
+        r = radians(getR(a)) # rotation
         s = dt * a.speed
         a.x += sin(r) * s
         a.y += cos(r) * s
         yield None
 
+@task
+def steerToMatchHeading(**kwargs):
+    """Perpetually steer to match actor's heading to neighbors.
+
+    @keyword dt: delta time
+    @keyword actor: actor to move
+    @keyword rate: steering rate
+    """
+    bb = kwargs['blackboard']
+    a = kwargs['actor']
+    rate = kwargs['rate']
+    while True:
+        dt = bb['dt']
+        n_heading = radians(a.neighbors_avg_heading)
+        my_heading = radians(a.rotation)
+        r = (n_heading - my_heading) % pi - pi_2
+        rsize = degrees(abs(r)) 
+        rchange = rsize * rate * dt
+        a.rotation += rchange
+        yield None
+
+@task
+def steerForSeparation(**kwargs):
+    """Steer to maintain distance between self and neighbors.
+    """
+    while True:
+        yield None
+
+@task
+def steerForCohesion(**kwargs):
+    """Steer toward the average position of neighbors.
+    """
+    while True:
+        yield None
 
 class Boid(Sprite):
     _img = pyglet.resource.image('triangle.png')
@@ -60,7 +100,6 @@ class Boid(Sprite):
     _img.anchor_y = _img.height / 2
 
     boids = []
-    others = property(lambda self: [b for b in self.boids if b is not self])
 
     def __init__(self, blackboard):
         super(Boid, self).__init__(self._img)
@@ -71,13 +110,46 @@ class Boid(Sprite):
         self.opacity = 0
         self.do(FadeIn(2))
         self.speed = 20
+        self.bounding_radius = 10
+        self.bounding_radius_squared = 100
 
         self.tree = self.buildTree()
+
+    @property
+    def neighbors(self):
+        """Find the other boids in my neighborhood.
+        """
+        others = self.boids # [b for b in self.boids if b is not self]
+        hood = (self.x, self.y, 1000) # neighborhood
+        n = collide_single(hood, others)
+        return n
+
+    @property
+    def neighbors_avg_pos(self):
+        """Find the average position of my neighbors.
+        """
+        neighbors = self.neighbors
+        num_n = float(len(neighbors))
+        avg_x = sum((getX(n) for n in neighbors))/num_n
+        avg_y = sum((getY(n) for n in neighbors))/num_n
+        return avg_x, avg_y
+
+    @property
+    def neighbors_avg_heading(self):
+        """Find the average heading of my neighbors.
+        """
+        neighbors = self.neighbors
+        num_n = float(len(neighbors))
+        avg_r = sum((getR(n) for n in neighbors))/num_n
+        return avg_r
 
     def buildTree(self):
         """Build the behavior tree.
         """
         tree = parallel(move(actor=self),
+                        steerToMatchHeading(actor=self, rate=2),
+                        steerForSeparation(actor=self, rate=2),
+                        steerForCohesion(actor=self, rate=2),
                         )
         return visit(tree, blackboard=self.bb)
 
