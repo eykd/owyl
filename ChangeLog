@@ -1,3 +1,5 @@
+Vectors are messed up right now.
+
 
 
  * parallel now runs each child once per iteration.

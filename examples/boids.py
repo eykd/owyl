@@ -17,7 +17,7 @@ __date__ = "$Date$"[7:-2]
 import os
 
 import random
-from math import radians, degrees, sin, cos, pi
+from math import radians, degrees, sin, cos, pi, atan2
 pi_2 = pi/2.0
 
 from operator import attrgetter, itemgetter
@@ -74,9 +74,14 @@ def steerToMatchHeading(**kwargs):
         dt = bb['dt']
         n_heading = radians(a.neighbors_avg_heading)
         my_heading = radians(a.rotation)
+
+        # Find the rotation delta
         r = (n_heading - my_heading) % pi - pi_2
         rsize = degrees(abs(r)) 
+
+        # Factor in our turning rate and elapsed time.
         rchange = rsize * rate * dt
+
         a.rotation += rchange
         yield None
 
@@ -84,14 +89,49 @@ def steerToMatchHeading(**kwargs):
 def steerForSeparation(**kwargs):
     """Steer to maintain distance between self and neighbors.
     """
+    bb = kwargs['blackboard']
+    a = kwargs['actor']
+    rate = kwargs['rate']
     while True:
+        cn = a.closest_neighbor
+        dt = bb['dt']
+
+        abs_heading_to_neighbor = atan2(a.y-cn.y, a.x-cn.x)
+        flee_heading = abs_heading_to_neighbor - pi
+        my_heading = radians(a.rotation)
+
+        # Find the rotation delta
+        r = (flee_heading - my_heading) % pi - pi_2
+        rsize = degrees(abs(r)) 
+
+        # Factor in our turning rate and elapsed time.
+        rchange = rsize * rate * dt
+
+        a.rotation += rchange
         yield None
 
 @task
 def steerForCohesion(**kwargs):
     """Steer toward the average position of neighbors.
     """
+    bb = kwargs['blackboard']
+    a = kwargs['actor']
+    rate = kwargs['rate']
     while True:
+        np_x, np_y = a.neighbors_avg_pos
+        dt = bb['dt']
+
+        seek_heading = atan2(a.y-np_y, a.x-np_x)
+        my_heading = radians(a.rotation)
+
+        # Find the rotation delta
+        r = (seek_heading - my_heading) % pi - pi_2
+        rsize = degrees(abs(r)) 
+
+        # Factor in our turning rate and elapsed time.
+        rchange = rsize * rate * dt
+
+        a.rotation += rchange
         yield None
 
 class Boid(Sprite):
@@ -109,11 +149,21 @@ class Boid(Sprite):
         self.boids.append(self)
         self.opacity = 0
         self.do(FadeIn(2))
-        self.speed = 20
+        self.speed = 40
         self.bounding_radius = 10
         self.bounding_radius_squared = 100
 
         self.tree = self.buildTree()
+
+    def buildTree(self):
+        """Build the behavior tree.
+        """
+        tree = parallel(move(actor=self),
+                        steerToMatchHeading(actor=self, rate=1.5),
+                        steerForSeparation(actor=self, rate=5),
+                        steerForCohesion(actor=self, rate=1),
+                        )
+        return visit(tree, blackboard=self.bb)
 
     @property
     def neighbors(self):
@@ -135,6 +185,17 @@ class Boid(Sprite):
         return avg_x, avg_y
 
     @property
+    def closest_neighbor(self):
+        """Find the closest neighbor.
+        """
+        neighbors = self.neighbors
+        mx = self.x
+        my = self.y
+        dn = ((abs(mx-n.x)+abs(my-n.y), n) for n in neighbors)
+        return sorted(dn)[0][1] # closest neighbor
+        
+
+    @property
     def neighbors_avg_heading(self):
         """Find the average heading of my neighbors.
         """
@@ -142,16 +203,6 @@ class Boid(Sprite):
         num_n = float(len(neighbors))
         avg_r = sum((getR(n) for n in neighbors))/num_n
         return avg_r
-
-    def buildTree(self):
-        """Build the behavior tree.
-        """
-        tree = parallel(move(actor=self),
-                        steerToMatchHeading(actor=self, rate=2),
-                        steerForSeparation(actor=self, rate=2),
-                        steerForCohesion(actor=self, rate=2),
-                        )
-        return visit(tree, blackboard=self.bb)
 
     def update(self, dt):
         self.bb['dt'] = dt
@@ -173,8 +224,8 @@ class SpriteLayer(ScrollableLayer):
         boids = []
         for x in xrange(how_many):
             boid = Boid(self.blackboard)
-            boid.position = (random.randint(50, 750),
-                             random.randint(50, 550))
+            boid.position = (random.randint(0, 1000),
+                             random.randint(0, 1000))
             boid.rotation = random.randint(1, 360)
             self.add(boid)
             boids.append(boid)
