@@ -6,6 +6,8 @@ An issue tracker and the latest sources can be found at
 <http://code.google.com/p/owyl/>. Currently, the project is in need
 of the following:
 
+ * Need to improve tracebacks.
+
  * Documentation improvements:
 
    * some example usages in a separate "examples" folder should be the

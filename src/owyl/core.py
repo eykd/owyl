@@ -21,7 +21,8 @@ except ImportError:
 
 RETURN_VALUES = (True, False, None)
 
-__all__ = ['task', 'visit', 'succeed', 'fail', 'succeedAfter', 'failAfter',
+__all__ = ['task', 'taskmethod', 'parent_task', 'parent_taskmethod', 'visit', 
+           'succeed', 'fail', 'succeedAfter', 'failAfter',
            'sequence', 'selector', 'parallel', 'PARALLEL_SUCCESS',
            'throw', 'catch']
 
@@ -43,6 +44,24 @@ def task(func):
     initTask.__name__ = func.__name__
     return initTask
 
+def taskmethod(func):
+    """Task decorator.
+
+    Decorate a generator function to produce a re-usable generator
+    factory for the given task.
+    """
+    def initTask(self, **initkwargs):
+        def makeIterator(**runkwargs):
+            runkwargs.update(initkwargs)
+            iterator = func(self, **runkwargs)
+            return iterator
+        makeIterator.__name__ = func.__name__
+        makeIterator.__doc__ = func.__doc__
+        return makeIterator
+    initTask.__doc__ = func.__doc__
+    initTask.__name__ = func.__name__
+    return initTask
+
 def parent_task(func):
     """Parent task decorator.
 
@@ -55,6 +74,26 @@ def parent_task(func):
         def makeIterator(**runkwargs):
             runkwargs.update(initkwargs)
             iterator = func(*children, **runkwargs)
+            return iterator
+        makeIterator.__name__ = func.__name__
+        makeIterator.__doc__ = func.__doc__
+        return makeIterator
+    initTask.__doc__ = func.__doc__
+    initTask.__name__ = func.__name__
+    return initTask
+
+def parent_taskmethod(func):
+    """Parent task decorator.
+
+    A parent task is a task that accepts children.
+
+    Decorate a generator function to produce a re-usable generator
+    factory for the given task.
+    """
+    def initTask(self, *children, **initkwargs):
+        def makeIterator(**runkwargs):
+            runkwargs.update(initkwargs)
+            iterator = func(self, *children, **runkwargs)
             return iterator
         makeIterator.__name__ = func.__name__
         makeIterator.__doc__ = func.__doc__
@@ -85,14 +124,12 @@ def visit(tree, **kwargs):
     s = Stack()
     return_values = RETURN_VALUES
 
-    current, cur_name = (tree(**kwargs), tree.__name__)
-    #print "Iterating over %s" % (cur_name, )
+    current = tree(**kwargs)
     send_value = None
     send_ok = False
     while True:
         try:
             if send_ok:
-                #print "Passing %s to %s" % (send_value, cur_name)
                 child = current.send(send_value)
                 send_value = None
                 send_ok = False
@@ -101,27 +138,23 @@ def visit(tree, **kwargs):
 
             if child in return_values:
                 send_value = child
-                #print "%s returned %s" % (cur_name, child)
                 yield send_value
             else:
                 # Descend into child node
-                s.push((current, cur_name))
-                current, cur_name = (child(**kwargs), child.__name__)
-                #print "Descending into %s" % (cur_name,)
+                s.push(current)
+                current = child
                 
         except StopIteration:
             try:
-                current, cur_name = s.pop()
-                #print "Ascending back to %s" % (cur_name,)
+                current = s.pop()
                 send_ok = True
             except EmptyError:
                 raise StopIteration
         except Exception, e:
-            exc = e.__class__
             try:
                 # Give the parent task a chance to handle the exception.
-                current, cur_name = s.pop()
-                current.throw(exc, e.message, sys.exc_info()[2])()
+                current = s.pop()
+                current.throw(*sys.exc_info())
             except EmptyError:
                 # Give up if the exception has propagated all the way
                 # up the tree:
@@ -182,7 +215,7 @@ def sequence(*children, **kwargs):
     """
     final_value = True
     for child in children:
-        result = yield child
+        result = yield child(**kwargs)
         if not result and result is not None:
             final_value = False
             break
@@ -203,7 +236,7 @@ def selector(*children, **kwargs):
     """
     final_value = False
     for child in children:
-        result = (yield child)
+        result = (yield child(**kwargs))
         if result:
             final_value = True
             break
@@ -305,6 +338,8 @@ def catch(child, **kwargs):
     branch = kwargs.pop('branch', fail())
     
     result = None
+    child = child(**kwargs)
+    branch = branch(**kwargs)
     try:
         while result is None:
             result = (yield child)

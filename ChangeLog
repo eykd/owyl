@@ -1,13 +1,31 @@
-Vectors are messed up right now.
+Many improvements, enough that future version is now 0.3.
 
+ * Working(!) boids example.
+   * Including tests for some of the vector math.
+   * Man, I hate vector math.
+ * Child handling has now been pushed into parent behaviors.
+   * Previously, children were only run once, and then
+     re-instantiated on the next iteration (oops!).
+   * Parent must call children before yielding them.
+   * visit will call the root task of its tree.
+ * Non-working decorators now work.
+ * I think parallel is really working right now.
+ * Tracebacks are totally not helpful right now. 
+   * Debugging is a pain in the neck.
+   * This needs to be improved upon.
+   * I have no idea how. Tracebacks seem to ignore time spent inside
+     of generators.
+   * Some sort of value-added generator-ified traceback may be in
+     order.
+2009-01-10 22:35  david.eyk
 
+	* [r40] ChangeLog, examples/boids.py: Vectors are messed up right
+	  now.
 
- * parallel now runs each child once per iteration.
+2009-01-10 17:07  david.eyk
 
-
-
-
- * parallel now runs each child once per iteration.
+	* [r39] ChangeLog, examples/boids.py, src/owyl/core.py: * parallel
+	  now runs each child once per iteration.
 
 2009-01-09 15:47  david.eyk
 
