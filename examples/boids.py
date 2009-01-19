@@ -92,7 +92,7 @@ Helpers
 
  A number of other helper methods clutter up the namespace. Boid also
  inherits from L{steering.Steerable<examples.steering.Steerable>},
- which contains common steering helper methads will be useful in
+ which contains common steering helper methods which will be useful in
  future examples.
 
 
@@ -121,34 +121,48 @@ pi_1_2 = pi/2.0
 pi_1_4 = pi/4.0
 pi_3_4 = (pi*3)/4
 
-from operator import attrgetter, itemgetter
+### Optimized attribute getters for sprites..
+from operator import attrgetter
 getX = attrgetter('x')
 getY = attrgetter('y')
 getR = attrgetter('rotation')
 
+### Memojito provides memoization (caching) services.
 import memojito
 
+### Pyglet provides graphics and resource management.
 import pyglet
 pyglet.resource.path = [os.path.dirname(os.path.abspath(__file__)),]
 pyglet.resource.reindex()
 
+## Cocos provides scene direction and composition
 from cocos.director import director
 from cocos.scene import Scene
 from cocos.actions import FadeIn
 from cocos.tiles import ScrollableLayer, ScrollingManager
 
-from owyl import blackboard
-from owyl import taskmethod, visit, succeed, fail
-from owyl import sequence, selector, parallel, PARALLEL_SUCCESS
-from owyl.decorators import repeatUntilFail, limit, repeatAlways
-
+## Rabbyt provides collision detection
 from rabbyt.collisions import collide_single
+
+## Owyl provides the wisdom
+from owyl import blackboard
+import owyl
 
 from steering import Steerable
 
 
 class Boid(Steerable):
-    _img = pyglet.resource.image('triangle.png')
+    """Implement a member of a flock.
+
+    Boid implements its leaf node behaviors as methods, using the
+    L{owyl.taskmethod} decorator. Leaf node behaviors may also be
+    implemented as unbound functions using the L{owyl.task}
+    decorators.
+
+    The boid's behavior tree is built in the L{Boid.buildTree} method,
+    below.
+    """
+    _img = pyglet.resource.image('triangle_yellow.png')
     _img.anchor_x = _img.width / 2
     _img.anchor_y = _img.height / 2
 
@@ -264,36 +278,38 @@ class Boid(Steerable):
             neighbors.
 
         """
-        tree = parallel(limit(repeatAlways(self.clearMemoes(), debug=True), 
-                              limit_period=1),
+        tree = owyl.parallel(
+            owyl.limit(
+                owyl.repeatAlways(self.clearMemoes(), debug=True), 
+                limit_period=0.4),
                         
-                        ### Velocity and Acceleration
-                        #############################
-                        repeatAlways(sequence(self.hasCloseNeighbors(),
-                                              self.accelerate(rate=.01),
-                                              ),
-                                     ),
-                        self.move(),
-                        self.matchSpeed(match_speed=200, rate=.01),
+            ### Velocity and Acceleration
+            #############################
+            owyl.repeatAlways(owyl.sequence(self.hasCloseNeighbors(),
+                                            self.accelerate(rate=-.01),
+                                            ),
+                              ),
+            self.move(),
+            self.matchSpeed(match_speed=300, rate=.01),
 
-                        ### Steering
-                        ############
-                        self.seek(goal=(0, 0), rate=2),
-                        self.steerToMatchHeading(rate=1),
-                        self.steerForSeparation(rate=3),
-                        self.steerForCohesion(rate=1),
+            ### Steering
+            ############
+            self.seek(goal=(0, 0), rate=5),
+            self.steerToMatchHeading(rate=2),
+            self.steerForSeparation(rate=5),
+            self.steerForCohesion(rate=2),
 
-                        policy=PARALLEL_SUCCESS.REQUIRE_ALL
-                        )
-        return visit(tree, blackboard=self.bb)
+            policy=owyl.PARALLEL_SUCCESS.REQUIRE_ALL
+            )
+        return owyl.visit(tree, blackboard=self.bb)
 
-    @taskmethod
+    @owyl.taskmethod
     def hasCloseNeighbors(self, **kwargs):
         """Check to see if we have close neighbors.
         """
         yield bool(self.closest_neighbors)
 
-    @taskmethod
+    @owyl.taskmethod
     def accelerate(self, **kwargs):
         """accelerate
 
@@ -305,7 +321,7 @@ class Boid(Steerable):
         self.speed = max(self.speed + rate * dt, 0)
         yield True
 
-    @taskmethod
+    @owyl.taskmethod
     def matchSpeed(self, **kwargs):
         """Accelerate to match the given speed.
 
@@ -325,7 +341,7 @@ class Boid(Steerable):
             self.speed += dv
             yield None
 
-    @taskmethod
+    @owyl.taskmethod
     def move(self, **kwargs):
         """Move the actor forward perpetually.
 
@@ -343,7 +359,7 @@ class Boid(Steerable):
             yield None
 
 
-    @taskmethod
+    @owyl.taskmethod
     def seek(self, **kwargs):
         """Perpetually seek a goal position.
 
@@ -369,7 +385,7 @@ class Boid(Steerable):
             yield None
             
 
-    @taskmethod
+    @owyl.taskmethod
     def steerToMatchHeading(self, **kwargs):
         """Perpetually steer to match actor's heading to neighbors.
         
@@ -396,7 +412,7 @@ class Boid(Steerable):
             self.rotation += rchange
             yield None
 
-    @taskmethod
+    @owyl.taskmethod
     def steerForSeparation(self, **kwargs):
         """Steer to maintain distance between self and neighbors.
 
@@ -426,7 +442,7 @@ class Boid(Steerable):
             self.rotation += rchange
             yield None
 
-    @taskmethod
+    @owyl.taskmethod
     def steerForCohesion(self, **kwargs):
         """Steer toward the average position of neighbors.
 
@@ -516,7 +532,7 @@ class Boid(Steerable):
             return 0.0
         return sum((getR(b) for b in boids))/len(boids)
 
-    @taskmethod
+    @owyl.taskmethod
     def clearMemoes(self, **kwargs):
         """Clear memoizations.
         """
@@ -541,7 +557,9 @@ class Boid(Steerable):
         self.tree.next()
 
 
-class SpriteLayer(ScrollableLayer):
+class BoidLayer(ScrollableLayer):
+    """Where the boids fly.
+    """
     is_event_handler = True
     
     def __init__(self, how_many):
@@ -583,5 +601,5 @@ if __name__ == "__main__":
         
     director.init(resizable=True, caption="Owyl Behavior Tree Demo: Boids",
                   width=1024, height=768)
-    s = Scene(SpriteLayer(how_many))
+    s = Scene(BoidLayer(how_many))
     director.run(s)

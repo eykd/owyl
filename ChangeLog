@@ -1,9 +1,18 @@
-Vastly improved boids documentation, packaging, extensibility.
+A few improvements to boids.py documentation. Also added a red triangle.
+2009-01-16 16:54  david.eyk
 
- * Include examples in Epydoc-generated docs.
- * Added tutorial-style docstrings to boids.
- * Added memojito to examples folder.
- * Broke common steering helpers into steering.Steerable.
+	* [r43] ChangeLog, epydoc.config, examples/__init__.py,
+	  examples/boids.py, examples/memojito,
+	  examples/memojito/LICENSE.txt, examples/memojito/README.txt,
+	  examples/memojito/__init__.py, examples/memojito/tests.py,
+	  examples/steering.py: Vastly improved boids documentation,
+	  packaging, extensibility.
+	  
+	  * Include examples in Epydoc-generated docs.
+	  * Added tutorial-style docstrings to boids.
+	  * Added memojito to examples folder.
+	  * Broke common steering helpers into steering.Steerable.
+
 2009-01-16 04:37  david.eyk
 
 	* [r41] ChangeLog, TODO, examples/boids.py, examples/testboids.py,
