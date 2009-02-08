@@ -563,7 +563,7 @@ class BoidLayer(ScrollableLayer):
     is_event_handler = True
     
     def __init__(self, how_many):
-        super(SpriteLayer, self).__init__()
+        super(BoidLayer, self).__init__()
         self.how_many = how_many
         self.manager = ScrollingManager()
         self.manager.add(self)
@@ -586,7 +586,7 @@ class BoidLayer(ScrollableLayer):
     def on_enter(self):
         """Code to run when the Layer enters the scene.
         """
-        super(SpriteLayer, self).on_enter()
+        super(BoidLayer, self).on_enter()
         self.boids = self.makeBoids()
 
         self.manager.set_focus(0, 0)

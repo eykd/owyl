@@ -1,4 +1,10 @@
-A few improvements to boids.py documentation. Also added a red triangle.
+2009-01-19 01:57  david.eyk
+
+	* [r44] ChangeLog, examples/boids.py, examples/triangle.png[DEL],
+	  examples/triangle_red.png, examples/triangle_yellow.png[CPY]: A
+	  few improvements to boids.py documentation. Also added a red
+	  triangle.
+
 2009-01-16 16:54  david.eyk
 
 	* [r43] ChangeLog, epydoc.config, examples/__init__.py,
