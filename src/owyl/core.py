@@ -26,6 +26,22 @@ __all__ = ['task', 'taskmethod', 'parent_task', 'parent_taskmethod', 'visit',
            'sequence', 'selector', 'parallel', 'PARALLEL_SUCCESS',
            'throw', 'catch']
 
+def wrap(result, func, *args, **kwargs):
+    """Wrap a callable as a task. Yield the result.
+    """
+    def initTask(**initkwargs):
+        def makeIterator(**runkwargs):
+            func(*args, **kwargs)
+            yield result
+        makeIterator.__name__ = func.__name__
+        makeIterator.__doc__ = func.__doc__
+        return makeIterator
+    initTask.__doc__ = func.__doc__
+    initTask.__name__ = func.__name__
+    return initTask
+            
+    
+
 def task(func):
     """Task decorator.
 
