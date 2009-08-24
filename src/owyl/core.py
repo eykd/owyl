@@ -22,17 +22,18 @@ except ImportError:
 RETURN_VALUES = (True, False, None)
 
 __all__ = ['task', 'taskmethod', 'parent_task', 'parent_taskmethod', 'visit', 
-           'succeed', 'fail', 'succeedAfter', 'failAfter',
+           'succeed', 'fail', 'succeedAfter', 'failAfter', 
            'sequence', 'selector', 'parallel', 'PARALLEL_SUCCESS',
+           'queue', 'parallel_queue',
            'throw', 'catch']
 
-def wrap(result, func, *args, **kwargs):
-    """Wrap a callable as a task. Yield the result.
+def wrap(func, *args, **kwargs):
+    """Wrap a callable as a task. Yield the boolean of its result.
     """
     def initTask(**initkwargs):
         def makeIterator(**runkwargs):
-            func(*args, **kwargs)
-            yield result
+            result = func(*args, **kwargs)
+            yield bool(result)
         makeIterator.__name__ = func.__name__
         makeIterator.__doc__ = func.__doc__
         return makeIterator
@@ -237,6 +238,62 @@ def sequence(*children, **kwargs):
             break
         
     yield final_value
+
+@parent_task
+def queue(queue, **kwargs):
+    """Run tasks in the queue in sequence.
+
+    The queue will run each task in the queue in sequence. If the
+    queue is empty, it will stall until the queue receives new items.
+
+    Note: the queue task *never* returns a success or failure code.
+
+    The queue should be an object implementing pop(). If the queue has
+    items in it, it should evaluate to True, otherwise False. The
+    queue task will pop the next task in the queue and evaluate it in
+    the normal fashion.
+
+    @param queue: task queue.
+    @type queue: A sequence object implementing pop()
+    """
+    while True:
+        if queue:
+            child = queue.pop()
+            yield child(**kwargs)
+        else:
+            yield None
+
+
+@parent_task
+def parallel_queue(queue, **kwargs):
+    """Run tasks in the queue in sequence.
+
+    The queue will run each task in the queue in sequence. If the
+    queue is empty, it will stall until the queue receives new items.
+
+    Note: the queue task *never* returns a success or failure code.
+
+    The queue should be an object implementing pop(). If the queue has
+    items in it, it should evaluate to True, otherwise False. The
+    queue task will pop the next task in the queue and evaluate it in
+    the normal fashion.
+
+    @param queue: task queue.
+    """
+    visits = [] # Canonical list of visited children
+    visiting = [] # Working list of visited children
+    while True:
+        if queue:
+            child = queue.pop()
+            visits.append(visit(child(**kwargs)))
+        visiting[:] = visits # Se we can remove from visits
+        for child in visiting:
+            try:
+                child.next()
+            except StopIteration:
+                visits.remove(child)
+        yield None
+
 
 @parent_task
 def selector(*children, **kwargs):
