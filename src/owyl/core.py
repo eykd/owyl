@@ -285,7 +285,7 @@ def parallel_queue(queue, **kwargs):
     while True:
         if queue:
             child = queue.pop()
-            visits.append(visit(child(**kwargs)))
+            visits.append(visit(child, **kwargs))
         visiting[:] = visits # Se we can remove from visits
         for child in visiting:
             try:
