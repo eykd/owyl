@@ -167,15 +167,15 @@ def visit(tree, **kwargs):
                 send_ok = True
             except EmptyError:
                 raise StopIteration
-        except Exception, e:
-            try:
-                # Give the parent task a chance to handle the exception.
-                current = s.pop()
-                current.throw(*sys.exc_info())
-            except EmptyError:
-                # Give up if the exception has propagated all the way
-                # up the tree:
-                raise e
+#         except Exception, e:
+#             try:
+#                 # Give the parent task a chance to handle the exception.
+#                 current = s.pop()
+#                 current.throw(*sys.exc_info())
+#             except EmptyError:
+#                 # Give up if the exception has propagated all the way
+#                 # up the tree:
+#                 raise e
         
 @task
 def succeed(**kwargs):
