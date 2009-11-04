@@ -268,7 +268,7 @@ def queue(queue, **kwargs):
 def parallel_queue(queue, **kwargs):
     """Run tasks in the queue in sequence.
 
-    The queue will run each task in the queue in sequence. If the
+    The queue will run each task in the queue in parallel. If the
     queue is empty, it will stall until the queue receives new items.
 
     Note: the queue task *never* returns a success or failure code.
