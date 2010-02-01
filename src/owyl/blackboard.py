@@ -23,8 +23,14 @@ __all__ = ['checkBB', 'setBB',]
 
 class Blackboard(defaultdict):
     """A dict that defaults values to None.
+
+    Blackboards are registered by name. All blackboards with the same
+    name have the same contents.
     """
-    def __init__(self, **kwargs):
+    _name_dict = defaultdict(dict) # For a twist on the Borg idiom
+    def __init__(self, name, **kwargs):
+        self.__dict__ = Blackboard._name_dict[name]
+
         default = lambda: None
         super(Blackboard, self).__init__(default, **kwargs)
 
