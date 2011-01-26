@@ -16,7 +16,7 @@ import unittest
 
 import owyl
 from owyl import blackboard
-from owyl import decorators
+
 
 class OwylTests(unittest.TestCase):
     """Tests for Owyl.
@@ -36,7 +36,6 @@ class OwylTests(unittest.TestCase):
         self.assertEqual(t.next(), True)
         self.assertRaises(StopIteration, t.next)
 
-
     def testFail(self):
         """Can we fail?
         """
@@ -49,7 +48,6 @@ class OwylTests(unittest.TestCase):
         self.assertEqual(t.next(), False)
         self.assertRaises(StopIteration, t.next)
 
-
     def testVisitSequenceSuccess(self):
         """Can we visit a successful sequence?
         """
@@ -59,14 +57,13 @@ class OwylTests(unittest.TestCase):
 
         v = owyl.visit(tree)
 
-        results =  [x for x in v if x is not None]
+        results = [x for x in v if x is not None]
         self.assertEqual(results, [True, True, True, True])
 
         v = owyl.visit(tree)
 
-        results =  [x for x in v if x is not None]
+        results = [x for x in v if x is not None]
         self.assertEqual(results, [True, True, True, True])
-
 
     def testVisitSequenceFailure(self):
         """Can we visit a failing sequence?
@@ -78,15 +75,14 @@ class OwylTests(unittest.TestCase):
 
         v = owyl.visit(tree)
 
-        results =  [x for x in v if x is not None]
+        results = [x for x in v if x is not None]
         self.assertEqual(results, [True, True, False, False])
 
         v = owyl.visit(tree)
 
-        results =  [x for x in v if x is not None]
+        results = [x for x in v if x is not None]
         self.assertEqual(results, [True, True, False, False])
         
-
     def testVisitSelectorSuccess(self):
         """Can we visit a successful selector?
         """
@@ -97,14 +93,13 @@ class OwylTests(unittest.TestCase):
 
         v = owyl.visit(tree)
 
-        results =  [x for x in v if x is not None]
+        results = [x for x in v if x is not None]
         self.assertEqual(results, [False, False, True, True])
 
         v = owyl.visit(tree)
 
-        results =  [x for x in v if x is not None]
+        results = [x for x in v if x is not None]
         self.assertEqual(results, [False, False, True, True])
-
 
     def testVisitSelectorFailure(self):
         """Can we visit a failing selector?
@@ -115,14 +110,13 @@ class OwylTests(unittest.TestCase):
 
         v = owyl.visit(tree)
 
-        results =  [x for x in v if x is not None]
+        results = [x for x in v if x is not None]
         self.assertEqual(results, [False, False, False, False])
 
         v = owyl.visit(tree)
 
-        results =  [x for x in v if x is not None]
+        results = [x for x in v if x is not None]
         self.assertEqual(results, [False, False, False, False])
-
 
     def testParallel_AllSucceed_Success(self):
         """Can we visit a suceeding parallel (all succeed)?
@@ -134,14 +128,13 @@ class OwylTests(unittest.TestCase):
                              policy=owyl.PARALLEL_SUCCESS.REQUIRE_ALL)
         v = owyl.visit(tree)
 
-        results =  [x for x in v if x is not None]
-        self.assertEqual(results, [True,])
+        results = [x for x in v if x is not None]
+        self.assertEqual(results, [True])
 
         v = owyl.visit(tree)
 
-        results =  [x for x in v if x is not None]
-        self.assertEqual(results, [True,])
-
+        results = [x for x in v if x is not None]
+        self.assertEqual(results, [True])
 
     def testParallel_OneSucceeds_Success(self):
         """Can we visit a suceeding parallel (one succeeds)?
@@ -153,14 +146,13 @@ class OwylTests(unittest.TestCase):
                              policy=owyl.PARALLEL_SUCCESS.REQUIRE_ONE)
         v = owyl.visit(tree)
 
-        results =  [x for x in v if x is not None]
-        self.assertEqual(results, [True,])
+        results = [x for x in v if x is not None]
+        self.assertEqual(results, [True])
 
         v = owyl.visit(tree)
 
-        results =  [x for x in v if x is not None]
-        self.assertEqual(results, [True,])
-
+        results = [x for x in v if x is not None]
+        self.assertEqual(results, [True])
 
     def testParallel_AllSucceed_Failure(self):
         """Can we visit a failing parallel (all succeed)?
@@ -172,9 +164,8 @@ class OwylTests(unittest.TestCase):
                              policy=owyl.PARALLEL_SUCCESS.REQUIRE_ALL)
         v = owyl.visit(tree)
 
-        results =  [x for x in v if x is not None]
-        self.assertEqual(results, [False,])
-
+        results = [x for x in v if x is not None]
+        self.assertEqual(results, [False])
 
     def testParallel_OneSucceeds_Failure(self):
         """Can we visit a failing parallel (one succeeds)?
@@ -186,14 +177,13 @@ class OwylTests(unittest.TestCase):
                              policy=owyl.PARALLEL_SUCCESS.REQUIRE_ONE)
         v = owyl.visit(tree)
 
-        results =  [x for x in v if x is not None]
-        self.assertEqual(results, [False,])
+        results = [x for x in v if x is not None]
+        self.assertEqual(results, [False])
 
         v = owyl.visit(tree)
 
-        results =  [x for x in v if x is not None]
-        self.assertEqual(results, [False,])
-
+        results = [x for x in v if x is not None]
+        self.assertEqual(results, [False])
 
     def testThrow(self):
         """Can we throw an exception within the tree?
@@ -212,7 +202,6 @@ class OwylTests(unittest.TestCase):
         self.assertEqual(v.next(), True)
         self.assertEqual(v.next(), True)
         self.assertRaises(ValueError, v.next)
-
 
     def testCatch(self):
         """Can we catch an exception thrown within the tree?
@@ -234,7 +223,6 @@ class OwylTests(unittest.TestCase):
         self.assertEqual(v.next(), True)
         self.assertEqual(v.next(), True)
 
-
     def testCatchIgnoresOthers(self):
         """Does catch ignore other exceptions thrown within the tree?
         """
@@ -254,7 +242,6 @@ class OwylTests(unittest.TestCase):
         self.assertEqual(v.next(), True)
         self.assertEqual(v.next(), True)
         self.assertRaises(ValueError, v.next)
-
 
     def testIdentity(self):
         """Does identity pass on return values unchanged?
@@ -285,14 +272,13 @@ class OwylTests(unittest.TestCase):
             self.assertEqual(v.next(), None)
         self.assertEqual(v.next(), False)
 
-
     def testCheckBB(self):
         """Can we check a value on a blackboard?
         """
         value = "foo"
         checker = lambda x: x == value
 
-        bb = blackboard.Blackboard(value=value)
+        bb = blackboard.Blackboard('test', value=value)
         tree = blackboard.checkBB(key='value',
                                   check=checker)
         
@@ -314,14 +300,13 @@ class OwylTests(unittest.TestCase):
         v = owyl.visit(tree, blackboard=bb)
         self.assertEqual(v.next(), False)
 
-
     def testSetBB(self):
         """Can we set a value on a blackboard?
         """
         value = 'foo'
         checker = lambda x: x == value
 
-        bb = blackboard.Blackboard(value='bar')
+        bb = blackboard.Blackboard('test', value='bar')
         tree = owyl.sequence(blackboard.setBB(key="value",
                                               value=value),
                              blackboard.checkBB(key='value',
@@ -339,16 +324,14 @@ class OwylTests(unittest.TestCase):
         result = [x for x in v][-1]
         self.assertEqual(result, True)
 
-
     def testRepeatUntilSucceed(self):
         """Can we repeat a behavior until it succeeds?
         """
-        bb = blackboard.Blackboard() # 'value' defaults to None.
+        bb = blackboard.Blackboard('test', )  # 'value' defaults to None.
         checker = lambda x: x is not None
 
         parallel = owyl.parallel
         repeat = owyl.repeatUntilSucceed
-        sequence = owyl.sequence
         checkBB = blackboard.checkBB
         setBB = blackboard.setBB
 
@@ -369,23 +352,20 @@ class OwylTests(unittest.TestCase):
         self.assertEqual(result, True)
 
         # Need to reset the blackboard to get the same results.
-        bb = blackboard.Blackboard() # 'value' defaults to None.
+        bb = blackboard.Blackboard('test', )  # 'value' defaults to None.
         v = owyl.visit(tree, blackboard=bb)
         results = [x for x in v]
         result = results[-1]
         self.assertEqual(result, True)
 
-
     def testRepeatUntilFail(self):
         """Can we repeat a behavior until it fails?
         """
-        bb = blackboard.Blackboard(value="foo")
-        checker = lambda x: x and True or False # must eval to True
+        bb = blackboard.Blackboard('test', value="foo")
+        checker = lambda x: x and True or False  # must eval to True
 
         parallel = owyl.parallel
         repeat = owyl.repeatUntilFail
-        sequence = owyl.sequence
-        flip = decorators.flip # 'NOT' operator
         checkBB = blackboard.checkBB
         setBB = blackboard.setBB
 
@@ -406,7 +386,7 @@ class OwylTests(unittest.TestCase):
         self.assertEqual(result, True)
 
         # Need to reset the blackboard to get the same results.
-        bb = blackboard.Blackboard(value="foo")
+        bb = blackboard.Blackboard('test', value="foo")
         v = owyl.visit(tree, blackboard=bb)
         results = [x for x in v]
         result = results[-1]

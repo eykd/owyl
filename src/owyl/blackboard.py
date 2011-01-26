@@ -19,7 +19,8 @@ from collections import defaultdict
 
 import core
 
-__all__ = ['checkBB', 'setBB',]
+__all__ = ['checkBB', 'setBB', ]
+
 
 class Blackboard(defaultdict):
     """A dict that defaults values to None.
@@ -27,12 +28,14 @@ class Blackboard(defaultdict):
     Blackboards are registered by name. All blackboards with the same
     name have the same contents.
     """
-    _name_dict = defaultdict(dict) # For a twist on the Borg idiom
+    _name_dict = defaultdict(dict)  # For a twist on the Borg idiom
+
     def __init__(self, name, **kwargs):
         self.__dict__ = Blackboard._name_dict[name]
 
         default = lambda: None
         super(Blackboard, self).__init__(default, **kwargs)
+
 
 @core.task
 def checkBB(**kwargs):
@@ -50,8 +53,9 @@ def checkBB(**kwargs):
     key = kwargs['key']
     check = kwargs.get('check', lambda x: x is not None)
     value = bb[key]
-    result = check(value) and True or False # Always return a boolean.
+    result = check(value) and True or False  # Always return a boolean.
     yield result
+
 
 @core.task
 def setBB(**kwargs):
@@ -69,5 +73,3 @@ def setBB(**kwargs):
     value = kwargs['value']
     bb[key] = value
     yield True
-
-

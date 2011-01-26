@@ -12,8 +12,6 @@ __author__ = "$Author$"[9:-2]
 __revision__ = "$Rev$"[6:-2]
 __date__ = "$Date$"[7:-2]
 
-import sys
-
 try:
     from mx.Stack import Stack, EmptyError
 except ImportError:
@@ -26,6 +24,7 @@ __all__ = ['task', 'taskmethod', 'parent_task', 'parent_taskmethod', 'visit',
            'sequence', 'selector', 'parallel', 'PARALLEL_SUCCESS',
            'queue', 'parallel_queue',
            'throw', 'catch']
+
 
 def wrap(func, *args, **kwargs):
     """Wrap a callable as a task. Yield the boolean of its result.
@@ -41,7 +40,6 @@ def wrap(func, *args, **kwargs):
     initTask.__name__ = func.__name__
     return initTask
             
-    
 
 def task(func):
     """Task decorator.
@@ -61,6 +59,7 @@ def task(func):
     initTask.__name__ = func.__name__
     return initTask
 
+
 def taskmethod(func):
     """Task decorator.
 
@@ -78,6 +77,7 @@ def taskmethod(func):
     initTask.__doc__ = func.__doc__
     initTask.__name__ = func.__name__
     return initTask
+
 
 def parent_task(func):
     """Parent task decorator.
@@ -99,6 +99,7 @@ def parent_task(func):
     initTask.__name__ = func.__name__
     return initTask
 
+
 def parent_taskmethod(func):
     """Parent task decorator.
 
@@ -118,6 +119,7 @@ def parent_taskmethod(func):
     initTask.__doc__ = func.__doc__
     initTask.__name__ = func.__name__
     return initTask
+
 
 def visit(tree, **kwargs):
     """Iterate over a tree of nested iterators.
@@ -167,27 +169,21 @@ def visit(tree, **kwargs):
                 send_ok = True
             except EmptyError:
                 raise StopIteration
-#         except Exception, e:
-#             try:
-#                 # Give the parent task a chance to handle the exception.
-#                 current = s.pop()
-#                 current.throw(*sys.exc_info())
-#             except EmptyError:
-#                 # Give up if the exception has propagated all the way
-#                 # up the tree:
-#                 raise e
-        
+
+
 @task
 def succeed(**kwargs):
     """Always succeed.
     """
     yield True
 
+
 @task
 def fail(**kwargs):
     """Always fail.
     """
     yield False
+
 
 @task
 def succeedAfter(**kwargs):
@@ -202,6 +198,7 @@ def succeedAfter(**kwargs):
     for x in xrange(after):
         yield None
     yield True
+
 
 @task
 def failAfter(**kwargs):
@@ -238,6 +235,7 @@ def sequence(*children, **kwargs):
             break
         
     yield final_value
+
 
 @parent_task
 def queue(queue, **kwargs):
@@ -280,13 +278,13 @@ def parallel_queue(queue, **kwargs):
 
     @param queue: task queue.
     """
-    visits = [] # Canonical list of visited children
-    visiting = [] # Working list of visited children
+    visits = []  # Canonical list of visited children
+    visiting = []  # Working list of visited children
     while True:
         if queue:
             child = queue.pop()
             visits.append(visit(child, **kwargs))
-        visiting[:] = visits # Se we can remove from visits
+        visiting[:] = visits  # Se we can remove from visits
         for child in visiting:
             try:
                 child.next()
@@ -323,8 +321,9 @@ class Enum(object):
     Subclass and add class variables.
     """
     def __init__(self): 
-        raise NotImplementedError, "_Enum class object. Do not instantiate."
-    
+        raise NotImplementedError("_Enum class object. Do not instantiate.")
+
+
 class PARALLEL_SUCCESS(Enum):
     """Success policy enumerator for parallel behavior.
 
@@ -333,6 +332,7 @@ class PARALLEL_SUCCESS(Enum):
     """
     REQUIRE_ALL = "ALL"
     REQUIRE_ONE = "ONE"
+
 
 @parent_task
 def parallel(*children, **kwargs):
@@ -377,6 +377,7 @@ def parallel(*children, **kwargs):
             break
     yield final_value
 
+
 @task
 def throw(**kwargs):
     """Throw (raise) an exception.
@@ -389,12 +390,16 @@ def throw(**kwargs):
     """
     throws = kwargs.pop('throws', Exception)
     throws_message = kwargs.pop('throws_message', '')
+
     class gen(object):
         def __iter__(self):
             return self
+
         def next(self):
             raise throws(throws_message)
+
     return gen()
+
 
 @parent_task
 def catch(child, **kwargs):
@@ -416,7 +421,7 @@ def catch(child, **kwargs):
     try:
         while result is None:
             result = (yield child)
-    except caught, e:
+    except caught:
         while result is None:
             result = (yield branch)
     yield result

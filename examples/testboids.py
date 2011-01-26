@@ -5,7 +5,7 @@
 import unittest
 
 from math import radians, pi
-pi_2 = pi/2.0
+pi_2 = pi / 2.0
 
 from cocos.director import director
 
@@ -13,11 +13,11 @@ from owyl import blackboard
 
 import boids
 
+
 class BoidsTest(unittest.TestCase):
     def setUp(self):
         director.init()
-        self.bb = blackboard.Blackboard()
-        
+        self.bb = blackboard.Blackboard('test', )
 
     def testFacing(self):
         """Can we find the rotation to a set of coordinates?
@@ -84,4 +84,3 @@ if __name__ == "__main__":
         testoob.main()
     except ImportError:
         unittest.main()
-        
