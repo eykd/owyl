@@ -39,7 +39,7 @@ def wrap(func, *args, **kwargs):
     initTask.__doc__ = func.__doc__
     initTask.__name__ = func.__name__
     return initTask
-            
+
 
 def task(func):
     """Task decorator.
@@ -183,6 +183,25 @@ def fail(**kwargs):
     """Always fail.
     """
     yield False
+
+
+@task
+def stall(**kwargs):
+    """Wrap a callable as a task. Yield the boolean of its result after 'after' iterations.
+
+    Yields 'None' 'after' times.
+
+    @keyword func: The callable to run.
+    @type func: callable
+
+    @keyword after: Run the callable after this many iterations.
+    @type after: int
+    """
+    func = kwargs.pop('func')
+    after = kwargs.pop('after', 1)
+    for x in xrange(after):
+        yield None
+    yield bool(func())
 
 
 @task
