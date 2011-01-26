@@ -17,7 +17,7 @@ try:
 except ImportError:
     from stack import Stack, EmptyError
 
-RETURN_VALUES = (True, False, None)
+RETURN_VALUES = set((True, False, None))
 
 __all__ = ['task', 'taskmethod', 'parent_task', 'parent_taskmethod', 'visit', 
            'succeed', 'fail', 'succeedAfter', 'failAfter', 
@@ -351,7 +351,7 @@ def parallel(*children, **kwargs):
     @type policy: C{PARALLEL_SUCCESS.REQUIRE_ALL} or 
                   C{PARALLEL_SUCCESS.REQUIRE_ONE}.
     """
-    return_values = (True, False)
+    return_values = set((True, False))
     policy = kwargs.pop('policy', PARALLEL_SUCCESS.REQUIRE_ONE)
     all_must_succeed = (policy == PARALLEL_SUCCESS.REQUIRE_ALL)
     visits = [visit(arg, **kwargs) for arg in children]
@@ -416,12 +416,12 @@ def catch(child, **kwargs):
     branch = kwargs.pop('branch', fail())
     
     result = None
-    child = child(**kwargs)
-    branch = branch(**kwargs)
+    tree = visit(child, **kwargs)
     try:
         while result is None:
-            result = (yield child)
+            result = tree.next()
+            yield None
     except caught:
         while result is None:
-            result = (yield branch)
+            result = (yield branch(**kwargs))
     yield result
