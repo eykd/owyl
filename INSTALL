@@ -25,20 +25,7 @@ Egenix mxBase can be found and downloaded at
 Development and Testing
 =======================
 
-To develop and test Owyl, use buildout to set up your environment:
-
-  $ python bootstrap.py
-  $ ./bin/buildout
-  $ ./bin/nosetests -vxd
-
-Everything's a little easier if you use `Vellum
-<https://launchpad.net/vellum/>`_.
-
-  $ vellum test
-
-Note: If you want to use vellum, the various 'clean' targets require
-remove.py, which you will find in the root distribution folder. Copy
-it somewhere on your PYTHON_PATH, and vellum won't complain.
+TBD
 
 
 Thanks
