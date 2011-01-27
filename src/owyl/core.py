@@ -283,7 +283,7 @@ def queue(queue, **kwargs):
 
 @parent_task
 def parallel_queue(queue, **kwargs):
-    """Run tasks in the queue in sequence.
+    """Run tasks in the queue in parallel.
 
     The queue will run each task in the queue in parallel. If the
     queue is empty, it will stall until the queue receives new items.
