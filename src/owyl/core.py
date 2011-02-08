@@ -19,7 +19,7 @@ except ImportError:
 
 RETURN_VALUES = set((True, False, None))
 
-__all__ = ['task', 'taskmethod', 'parent_task', 'parent_taskmethod', 'visit', 
+__all__ = ['wrap', 'task', 'taskmethod', 'parent_task', 'parent_taskmethod', 'visit', 
            'succeed', 'fail', 'succeedAfter', 'failAfter', 
            'sequence', 'selector', 'parallel', 'PARALLEL_SUCCESS',
            'queue', 'parallel_queue',
