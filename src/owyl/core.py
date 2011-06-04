@@ -129,11 +129,15 @@ def parent_taskmethod(func):
             runkwargs.update(initkwargs)
             iterator = func(self, *children, **runkwargs)
             return iterator
-        makeIterator.__name__ = func.__name__
-        makeIterator.__doc__ = func.__doc__
+        try: makeIterator.__name__ = func.__name__
+        except AttributeError: pass
+        try: makeIterator.__doc__ = func.__doc__
+        except AttributeError: pass
         return makeIterator
-    initTask.__doc__ = func.__doc__
-    initTask.__name__ = func.__name__
+    try: initTask.__doc__ = func.__doc__
+    except AttributeError: pass
+    try: initTask.__name__ = func.__name__
+    except AttributeError: pass
     return initTask
 
 
