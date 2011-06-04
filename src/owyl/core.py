@@ -33,11 +33,15 @@ def wrap(func, *args, **kwargs):
         def makeIterator(**runkwargs):
             result = func(*args, **kwargs)
             yield bool(result)
-        makeIterator.__name__ = func.__name__
-        makeIterator.__doc__ = func.__doc__
+        try: makeIterator.__name__ = func.__name__
+        except AttributeError: pass
+        try: makeIterator.__doc__ = func.__doc__
+        except AttributeError: pass
         return makeIterator
-    initTask.__doc__ = func.__doc__
-    initTask.__name__ = func.__name__
+    try: initTask.__doc__ = func.__doc__
+    except AttributeError: pass
+    try: initTask.__name__ = func.__name__
+    except AttributeError: pass
     return initTask
 
 
@@ -52,11 +56,15 @@ def task(func):
             runkwargs.update(initkwargs)
             iterator = func(**runkwargs)
             return iterator
-        makeIterator.__name__ = func.__name__
-        makeIterator.__doc__ = func.__doc__
+        try: makeIterator.__name__ = func.__name__
+        except AttributeError: pass
+        try: makeIterator.__doc__ = func.__doc__
+        except AttributeError: pass
         return makeIterator
-    initTask.__doc__ = func.__doc__
-    initTask.__name__ = func.__name__
+    try: initTask.__doc__ = func.__doc__
+    except AttributeError: pass
+    try: initTask.__name__ = func.__name__
+    except AttributeError: pass
     return initTask
 
 
@@ -71,11 +79,15 @@ def taskmethod(func):
             runkwargs.update(initkwargs)
             iterator = func(self, **runkwargs)
             return iterator
-        makeIterator.__name__ = func.__name__
-        makeIterator.__doc__ = func.__doc__
+        try: makeIterator.__name__ = func.__name__
+        except AttributeError: pass
+        try: makeIterator.__doc__ = func.__doc__
+        except AttributeError: pass
         return makeIterator
-    initTask.__doc__ = func.__doc__
-    initTask.__name__ = func.__name__
+    try: initTask.__doc__ = func.__doc__
+    except AttributeError: pass
+    try: initTask.__name__ = func.__name__
+    except AttributeError: pass
     return initTask
 
 
@@ -92,11 +104,15 @@ def parent_task(func):
             runkwargs.update(initkwargs)
             iterator = func(*children, **runkwargs)
             return iterator
-        makeIterator.__name__ = func.__name__
-        makeIterator.__doc__ = func.__doc__
+        try: makeIterator.__name__ = func.__name__
+        except AttributeError: pass
+        try: makeIterator.__doc__ = func.__doc__
+        except AttributeError: pass
         return makeIterator
-    initTask.__doc__ = func.__doc__
-    initTask.__name__ = func.__name__
+    try: initTask.__doc__ = func.__doc__
+    except AttributeError: pass
+    try: initTask.__name__ = func.__name__
+    except AttributeError: pass
     return initTask
 
 
