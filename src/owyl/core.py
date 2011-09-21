@@ -12,6 +12,8 @@ __author__ = "$Author$"[9:-2]
 __revision__ = "$Rev$"[6:-2]
 __date__ = "$Date$"[7:-2]
 
+import logging
+
 try:
     from mx.Stack import Stack, EmptyError
 except ImportError:
@@ -23,7 +25,8 @@ __all__ = ['wrap', 'task', 'taskmethod', 'parent_task', 'parent_taskmethod', 'vi
            'succeed', 'fail', 'succeedAfter', 'failAfter', 
            'sequence', 'selector', 'parallel', 'PARALLEL_SUCCESS',
            'queue', 'parallel_queue',
-           'throw', 'catch']
+           'throw', 'catch',
+           'log',]
 
 
 def wrap(func, *args, **kwargs):
@@ -464,3 +467,24 @@ def catch(child, **kwargs):
         while result is None:
             result = (yield branch(**kwargs))
     yield result
+
+
+@parent_task
+def log(message, **kwargs):
+    """Log a message to the given logger.
+
+    @keyword name: The name of the logger to use.
+    @type name: str
+
+    @keyword level: The logging level to use.
+    @default level: logging.DEBUG
+    """
+    name = kwargs.pop('name', None)
+    if name is None:
+        logger = logging.getLogger()
+    else:
+        logger = logging.getLogger(name)
+
+    level = kwargs.pop('level', logging.DEBUG)
+    logger.log(level, message)
+    yield True
