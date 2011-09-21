@@ -19,7 +19,7 @@ from collections import defaultdict
 
 import core
 
-__all__ = ['checkBB', 'setBB', ]
+__all__ = ['Blackboard', 'checkBB', 'setBB', ]
 
 
 class Blackboard(defaultdict):
