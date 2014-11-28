@@ -599,7 +599,8 @@ class BoidLayer(ScrollableLayer):
         super(BoidLayer, self).on_enter()
         self.boids = self.makeBoids()
 
-        self.manager.set_focus(0, 0)
+        # Place flock in the center of the window
+        self.manager.set_focus(-512, -384)
 
 
 if __name__ == "__main__":
