@@ -140,7 +140,7 @@ pyglet.resource.reindex()
 from cocos.director import director
 from cocos.scene import Scene
 from cocos.actions import FadeIn
-from cocos.tiles import ScrollableLayer, ScrollingManager
+from cocos.layer import ScrollableLayer, ScrollingManager
 
 ## Rabbyt provides collision detection
 from rabbyt.collisions import collide_single
