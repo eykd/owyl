@@ -578,7 +578,7 @@ class BoidLayer(ScrollableLayer):
         self.manager = ScrollingManager()
         self.manager.add(self)
         self.active = None
-        self.blackboard = blackboard.Blackboard()
+        self.blackboard = blackboard.Blackboard("boids")
         self.boids = None
 
     def makeBoids(self):
