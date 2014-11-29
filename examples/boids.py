@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 """boids -- Boids implementation using Owyl behavior trees.
 
@@ -139,7 +140,7 @@ pyglet.resource.reindex()
 from cocos.director import director
 from cocos.scene import Scene
 from cocos.actions import FadeIn
-from cocos.tiles import ScrollableLayer, ScrollingManager
+from cocos.layer import ScrollableLayer, ScrollingManager
 
 ## Rabbyt provides collision detection
 from rabbyt.collisions import collide_single
@@ -198,7 +199,7 @@ class Boid(Steerable):
          scheduler. That is, it will run one step on each its children
          sequentially, so that the children execute parallel to each
          other. Parallel is useful as a root behavior when we want
-         multiple behaviors to run at teh same time, as with Boids.
+         multiple behaviors to run at the same time, as with Boids.
 
          The first call to a task node constructor returns another
          function. Calling I{that} function will return an iterable
@@ -212,7 +213,7 @@ class Boid(Steerable):
          (call to visit). The C{blackboard} keyword argument to
          C{visit} will be available to the entire tree. (This is also
          why all nodes should accept C{**kwargs}-style keyword
-         arguments, and access 
+         arguments, and access.
 
          Skipping down to the end of the tree definition, we see the
          first use of
@@ -241,7 +242,7 @@ class Boid(Steerable):
 
          In the example below, we're using
          L{limit<owyl.decorators.limit>} to clear memoes once every
-         second. This implementation of Boids uses
+         0.4 seconds. This implementation of Boids uses
          L{memojito<examples.memojito>} to cache (or "memoize")
          neighbor data for each Boid. Neighbor data is used by each of
          the core behaviors, and is fairly expensive to
@@ -251,13 +252,22 @@ class Boid(Steerable):
 
         L{repeatAlways<owyl.decorators.repeatAlways>}
         =============================================
-        
+
          We next see the L{repeatAlways<owyl.decorators.repeatAlways>}
          decorator node. This does exactly as you might expect: it
          takes a behavior that might only run once, and repeats it
          perpetually, ignoring return values and always yielding None
          (the special code for "I'm not done yet, give me another
          chance to run").
+
+        L{sequence<owyl.decorators.sequence>}
+        =============================================
+
+         Runs a sequence of actions. If any action yields False,
+         then the rest of the sequence is not executed (the sequence
+         is halted).  Otherwise, the next sequence item is run.  In
+         this example, a boid accelerates away only if it is too close
+         to another boid.
 
         Core Behaviors
         ==============
@@ -280,9 +290,9 @@ class Boid(Steerable):
         """
         tree = owyl.parallel(
             owyl.limit(
-                owyl.repeatAlways(self.clearMemoes(), debug=True), 
+                owyl.repeatAlways(self.clearMemoes(), debug=True),
                 limit_period=0.4),
-                        
+
             ### Velocity and Acceleration
             #############################
             owyl.repeatAlways(owyl.sequence(self.hasCloseNeighbors(),
@@ -377,18 +387,18 @@ class Boid(Steerable):
             dy = gy-self.y
             seek_heading = self.getFacing(dx, dy)
             my_heading = radians(self.rotation)
-            
+
             rsize = degrees(self.findRotationDelta(my_heading, seek_heading))
 
             rchange = rsize * rate * dt
             self.rotation += rchange
             yield None
-            
+
 
     @owyl.taskmethod
     def steerToMatchHeading(self, **kwargs):
         """Perpetually steer to match actor's heading to neighbors.
-        
+
         @keyword blackboard: shared blackboard
         @keyword rate: steering rate
 
@@ -403,12 +413,12 @@ class Boid(Steerable):
                 yield None
                 continue
             my_heading = radians(self.rotation)
-            
+
             rsize = degrees(self.findRotationDelta(my_heading, n_heading))
 
             # Factor in our turning rate and elapsed time.
             rchange = rsize * rate * dt
-            
+
             self.rotation += rchange
             yield None
 
@@ -425,20 +435,20 @@ class Boid(Steerable):
         rate = kwargs['rate']
         while True:
             cn_x, cn_y = self.findAveragePosition(*self.closest_neighbors)
-            
+
             dt = bb['dt']
             dx = self.x-cn_x
             dy = self.y-cn_y
-            
+
             heading_away_from_neighbors = self.getFacing(dx, dy)
             flee_heading = heading_away_from_neighbors
             my_heading = radians(self.rotation)
-            
+
             rsize = degrees(self.findRotationDelta(my_heading, flee_heading))
-            
+
             # Factor in our turning rate and elapsed time.
             rchange = rsize * rate * dt
-            
+
             self.rotation += rchange
             yield None
 
@@ -464,14 +474,14 @@ class Boid(Steerable):
 
             # Find the rotation delta
             rsize = degrees(self.findRotationDelta(my_heading, seek_heading))
-            
+
             # Factor in our turning rate and elapsed time.
             rchange = rsize * rate * dt
 
             self.rotation += rchange
             yield None
 
-                                     
+
 
     def canSee(self, other):
         """Return True if I can see the other boid.
@@ -510,7 +520,7 @@ class Boid(Steerable):
         hood = (self.x, self.y, self.personal_radius)
         n = collide_single(hood, self.others)
         return n
-    
+
     def findAveragePosition(self, *boids):
         """Return the average position of the given boids.
 
@@ -561,14 +571,14 @@ class BoidLayer(ScrollableLayer):
     """Where the boids fly.
     """
     is_event_handler = True
-    
+
     def __init__(self, how_many):
         super(BoidLayer, self).__init__()
         self.how_many = how_many
         self.manager = ScrollingManager()
         self.manager.add(self)
         self.active = None
-        self.blackboard = blackboard.Blackboard()
+        self.blackboard = blackboard.Blackboard("boids")
         self.boids = None
 
     def makeBoids(self):
@@ -589,7 +599,8 @@ class BoidLayer(ScrollableLayer):
         super(BoidLayer, self).on_enter()
         self.boids = self.makeBoids()
 
-        self.manager.set_focus(0, 0)
+        # Place flock in the center of the window
+        self.manager.set_focus(-512, -384)
 
 
 if __name__ == "__main__":
@@ -598,7 +609,7 @@ if __name__ == "__main__":
         how_many = int(sys.argv[1])
     else:
         how_many = 50
-        
+
     director.init(resizable=True, caption="Owyl Behavior Tree Demo: Boids",
                   width=1024, height=768)
     s = Scene(BoidLayer(how_many))
