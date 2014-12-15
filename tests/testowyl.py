@@ -185,6 +185,38 @@ class OwylTests(unittest.TestCase):
         results = [x for x in v if x is not None]
         self.assertEqual(results, [False])
 
+    def testParallel_DelayedFailure(self):
+        """Can parallel fail if child fails later (all succeed)?
+        """
+        # Fail after 5 iterations.
+        after = 5
+        tree = owyl.parallel(owyl.succeed(),
+                             owyl.failAfter(after=after),
+                             policy=owyl.PARALLEL_SUCCESS.REQUIRE_ALL)
+        v = owyl.visit(tree)
+        results = [x for x in v if x is not None]
+        self.assertEqual(results, [False])
+
+        v = owyl.visit(tree)
+        results = [x for x in v if x is not None]
+        self.assertEqual(results, [False])
+
+    def testParallel_DelayedSuccess(self):
+        """Can parallel succeed if child succeeds later (one succeeds)?
+        """
+        # Succeed after 5 iterations.
+        after = 5
+        tree = owyl.parallel(owyl.fail(),
+                             owyl.succeedAfter(after=after),
+                             policy=owyl.PARALLEL_SUCCESS.REQUIRE_ONE)
+        v = owyl.visit(tree)
+        results = [x for x in v if x is not None]
+        self.assertEqual(results, [True])
+
+        v = owyl.visit(tree)
+        results = [x for x in v if x is not None]
+        self.assertEqual(results, [True])
+
     def testThrow(self):
         """Can we throw an exception within the tree?
         """
