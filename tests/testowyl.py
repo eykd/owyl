@@ -424,6 +424,84 @@ class OwylTests(unittest.TestCase):
         result = results[-1]
         self.assertEqual(result, True)
 
+    def testRepeatUntilSucceed_Count(self):
+        """Does repeatUntilSucceed execute its child with every tick?
+        """
+        # How many times to repeat the behavior?
+        ticks = 100
+        bb = blackboard.Blackboard('test', count=0)
+
+        @owyl.task
+        def increment(**kwargs):
+            bb, key = kwargs['blackboard'], kwargs['key']
+            bb[key] += 1
+            yield False
+
+        tree = owyl.repeatUntilSucceed(increment(key='count'))
+        v = owyl.visit(tree, blackboard=bb)
+        for i in xrange(ticks):
+          v.next()
+        self.assertEqual(bb['count'], ticks)
+
+        # Need to reset the blackboard to get the same results.
+        bb = blackboard.Blackboard('test', count=0)
+        v = owyl.visit(tree, blackboard=bb)
+        for i in xrange(ticks):
+          v.next()
+        self.assertEqual(bb['count'], ticks)
+
+    def testRepeatUntilFail_Count(self):
+        """Does repeatUntilFail execute its child with every tick?
+        """
+        # How many times to repeat the behavior?
+        ticks = 100
+        bb = blackboard.Blackboard('test', count=0)
+
+        @owyl.task
+        def increment(**kwargs):
+            bb, key = kwargs['blackboard'], kwargs['key']
+            bb[key] += 1
+            yield True
+
+        tree = owyl.repeatUntilFail(increment(key='count'))
+        v = owyl.visit(tree, blackboard=bb)
+        for i in xrange(ticks):
+          v.next()
+        self.assertEqual(bb['count'], ticks)
+
+        # Need to reset the blackboard to get the same results.
+        bb = blackboard.Blackboard('test', count=0)
+        v = owyl.visit(tree, blackboard=bb)
+        for i in xrange(ticks):
+          v.next()
+        self.assertEqual(bb['count'], ticks)
+
+    def testRepeatAlways_Count(self):
+        """Does repeatAlways execute its child with every tick?
+        """
+        # How many times to repeat the behavior?
+        ticks = 100
+        bb = blackboard.Blackboard('test', count=0)
+
+        @owyl.task
+        def increment(**kwargs):
+            bb, key = kwargs['blackboard'], kwargs['key']
+            bb[key] += 1
+            yield True
+
+        tree = owyl.repeatAlways(increment(key='count'))
+        v = owyl.visit(tree, blackboard=bb)
+        for i in xrange(ticks):
+          v.next()
+        self.assertEqual(bb['count'], ticks)
+
+        # Need to reset the blackboard to get the same results.
+        bb = blackboard.Blackboard('test', count=0)
+        v = owyl.visit(tree, blackboard=bb)
+        for i in xrange(ticks):
+          v.next()
+        self.assertEqual(bb['count'], ticks)
+
 
 if __name__ == "__main__":
     runner = unittest
