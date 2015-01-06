@@ -13,6 +13,7 @@ __revision__ = "$Rev$"[6:-2]
 __date__ = "$Date$"[7:-2]
 
 import logging
+from collections import OrderedDict
 
 try:
     from mx.Stack import Stack, EmptyError
@@ -21,8 +22,8 @@ except ImportError:
 
 RETURN_VALUES = set((True, False, None))
 
-__all__ = ['wrap', 'task', 'taskmethod', 'parent_task', 'parent_taskmethod', 'visit', 
-           'succeed', 'fail', 'succeedAfter', 'failAfter', 
+__all__ = ['wrap', 'task', 'taskmethod', 'parent_task', 'parent_taskmethod', 'visit',
+           'succeed', 'fail', 'succeedAfter', 'failAfter',
            'sequence', 'selector', 'parallel', 'PARALLEL_SUCCESS',
            'queue', 'parallel_queue',
            'throw', 'catch',
@@ -185,7 +186,7 @@ def visit(tree, **kwargs):
                 # Descend into child node
                 s.push(current)
                 current = child
-                
+
         except StopIteration:
             try:
                 current = s.pop()
@@ -275,7 +276,7 @@ def sequence(*children, **kwargs):
         if not result and result is not None:
             final_value = False
             break
-        
+
     yield final_value
 
 
@@ -353,16 +354,16 @@ def selector(*children, **kwargs):
         if result:
             final_value = True
             break
-        
+
     yield final_value
 
 
 class Enum(object):
-    """Enum/namespace class. Cannot be implemented. 
+    """Enum/namespace class. Cannot be implemented.
 
     Subclass and add class variables.
     """
-    def __init__(self): 
+    def __init__(self):
         raise NotImplementedError("_Enum class object. Do not instantiate.")
 
 
@@ -388,35 +389,38 @@ def parallel(*children, **kwargs):
 
     @param children: tasks to run in parallel as children.
 
-    @keyword policy: The success policy. All must succeed, 
+    @keyword policy: The success policy. All must succeed,
                    or only one must succeed.
-    @type policy: C{PARALLEL_SUCCESS.REQUIRE_ALL} or 
+    @type policy: C{PARALLEL_SUCCESS.REQUIRE_ALL} or
                   C{PARALLEL_SUCCESS.REQUIRE_ONE}.
     """
     return_values = set((True, False))
     policy = kwargs.pop('policy', PARALLEL_SUCCESS.REQUIRE_ONE)
     all_must_succeed = (policy == PARALLEL_SUCCESS.REQUIRE_ALL)
-    visits = [visit(arg, **kwargs) for arg in children]
-    final_value = True
-    while True:
-        try:
-            # Run one step on each child per iteration.
-            for child in visits:
+
+    #Ordered dictionary mapping visitors to their last returned values
+    visits = OrderedDict([(visit(arg, **kwargs), None) for arg in children])
+
+    #Default final_value (if all visitors finish)
+    final_value = all_must_succeed
+
+    while len(visits) > 0:
+        # Run one step on each child per iteration.
+        for child in visits.keys():
+            try:
                 result = child.next()
-                if result in return_values:
-                    if not result and all_must_succeed:
+                visits[child] = result
+            except StopIteration:
+                lastval = visits[child]
+                del visits[child]
+                if lastval in return_values:
+                    if not lastval and all_must_succeed:
                         final_value = False
                         break
-                    elif result and not all_must_succeed:
+                    elif lastval and not all_must_succeed:
                         final_value = True
                         break
-                    else:
-                        final_value = result
-            yield None
-        except StopIteration:
-            break
-        except EmptyError:
-            break
+        yield None
     yield final_value
 
 
@@ -456,7 +460,7 @@ def catch(child, **kwargs):
     """
     caught = kwargs.pop('caught', Exception)
     branch = kwargs.pop('branch', fail())
-    
+
     result = None
     tree = visit(child, **kwargs)
     try:

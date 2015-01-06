@@ -47,19 +47,8 @@ def flip(child, **kwargs):
 def repeatAlways(child, **kwargs):
     """Perpetually iterate over the child, regardless of return value.
     """
-    result = None
     while True:
-        try:
-            visitor = core.visit(child, **kwargs)
-        except StopIteration:
-            continue
-        while result is None:
-            try:
-                result = (yield visitor.next())
-            except StopIteration:
-                yield None
-                break
-        
+        yield child(**kwargs)
 
 @core.parent_task
 def repeatUntilFail(child, **kwargs):
@@ -69,18 +58,10 @@ def repeatUntilFail(child, **kwargs):
     @type final_value: C{True} or C{False}
     """
     final_value = kwargs.pop('final_value', False)
-    result = None
-    child = child(**kwargs)
-    while result is None:
-        try:
-            result = (yield child)
-            if result is False:
-                break
-            else:
-                yield None # Yield to other tasks.
-                result = None
-        except StopIteration:
-            result = None
+    while True:
+        result = (yield child(**kwargs))
+        if result is False:
+            break
     yield final_value
 
 @core.parent_task
@@ -90,19 +71,11 @@ def repeatUntilSucceed(child, **kwargs):
     @keyword final_value: Value to return on failure.
     @type final_value: C{True} or C{False}
     """
-    final_value = kwargs.pop('final_value', True)
-    result = None
-    child = child(**kwargs)
-    while result is None:
-        try:
-            result = (yield child)
-            if result is True:
-                break
-            else:
-                yield None # Yield to other tasks.
-                result = None
-        except StopIteration:
-            result = None
+    final_value = kwargs.pop('final_value', False)
+    while True:
+        result = (yield child(**kwargs))
+        if result is True:
+            break
     yield final_value
 
 @core.parent_task

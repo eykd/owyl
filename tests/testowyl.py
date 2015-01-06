@@ -82,7 +82,7 @@ class OwylTests(unittest.TestCase):
 
         results = [x for x in v if x is not None]
         self.assertEqual(results, [True, True, False, False])
-        
+
     def testVisitSelectorSuccess(self):
         """Can we visit a successful selector?
         """
@@ -242,7 +242,7 @@ class OwylTests(unittest.TestCase):
                              owyl.succeed(),
                              owyl.catch(owyl.throw(throws=ValueError,
                                                    throws_message="AUGH!!"),
-                                        caught=ValueError, 
+                                        caught=ValueError,
                                         branch=owyl.succeed())
                              )
         v = owyl.visit(tree)
@@ -262,7 +262,7 @@ class OwylTests(unittest.TestCase):
                              owyl.succeed(),
                              owyl.catch(owyl.throw(throws=ValueError,
                                                    throws_message="AUGH!!"),
-                                        caught=IndexError, 
+                                        caught=IndexError,
                                         branch=owyl.succeed())
                              )
         v = owyl.visit(tree)
@@ -313,7 +313,7 @@ class OwylTests(unittest.TestCase):
         bb = blackboard.Blackboard('test', value=value)
         tree = blackboard.checkBB(key='value',
                                   check=checker)
-        
+
         # Note that we can pass in the blackboard at run-time.
         v = owyl.visit(tree, blackboard=bb)
 
@@ -344,7 +344,7 @@ class OwylTests(unittest.TestCase):
                              blackboard.checkBB(key='value',
                                                 check=checker)
                              )
-        
+
         # Note that we can pass in the blackboard at run-time.
         v = owyl.visit(tree, blackboard=bb)
 
@@ -440,14 +440,14 @@ class OwylTests(unittest.TestCase):
         tree = owyl.repeatUntilSucceed(increment(key='count'))
         v = owyl.visit(tree, blackboard=bb)
         for i in xrange(ticks):
-          v.next()
+            v.next()
         self.assertEqual(bb['count'], ticks)
 
         # Need to reset the blackboard to get the same results.
         bb = blackboard.Blackboard('test', count=0)
         v = owyl.visit(tree, blackboard=bb)
         for i in xrange(ticks):
-          v.next()
+            v.next()
         self.assertEqual(bb['count'], ticks)
 
     def testRepeatUntilFail_Count(self):
