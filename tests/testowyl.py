@@ -82,7 +82,7 @@ class OwylTests(unittest.TestCase):
 
         results = [x for x in v if x is not None]
         self.assertEqual(results, [True, True, False, False])
-        
+
     def testVisitSelectorSuccess(self):
         """Can we visit a successful selector?
         """
@@ -185,6 +185,38 @@ class OwylTests(unittest.TestCase):
         results = [x for x in v if x is not None]
         self.assertEqual(results, [False])
 
+    def testParallel_DelayedFailure(self):
+        """Can parallel fail if child fails later (all succeed)?
+        """
+        # Fail after 5 iterations.
+        after = 5
+        tree = owyl.parallel(owyl.succeed(),
+                             owyl.failAfter(after=after),
+                             policy=owyl.PARALLEL_SUCCESS.REQUIRE_ALL)
+        v = owyl.visit(tree)
+        results = [x for x in v if x is not None]
+        self.assertEqual(results, [False])
+
+        v = owyl.visit(tree)
+        results = [x for x in v if x is not None]
+        self.assertEqual(results, [False])
+
+    def testParallel_DelayedSuccess(self):
+        """Can parallel succeed if child succeeds later (one succeeds)?
+        """
+        # Succeed after 5 iterations.
+        after = 5
+        tree = owyl.parallel(owyl.fail(),
+                             owyl.succeedAfter(after=after),
+                             policy=owyl.PARALLEL_SUCCESS.REQUIRE_ONE)
+        v = owyl.visit(tree)
+        results = [x for x in v if x is not None]
+        self.assertEqual(results, [True])
+
+        v = owyl.visit(tree)
+        results = [x for x in v if x is not None]
+        self.assertEqual(results, [True])
+
     def testThrow(self):
         """Can we throw an exception within the tree?
         """
@@ -210,7 +242,7 @@ class OwylTests(unittest.TestCase):
                              owyl.succeed(),
                              owyl.catch(owyl.throw(throws=ValueError,
                                                    throws_message="AUGH!!"),
-                                        caught=ValueError, 
+                                        caught=ValueError,
                                         branch=owyl.succeed())
                              )
         v = owyl.visit(tree)
@@ -230,7 +262,7 @@ class OwylTests(unittest.TestCase):
                              owyl.succeed(),
                              owyl.catch(owyl.throw(throws=ValueError,
                                                    throws_message="AUGH!!"),
-                                        caught=IndexError, 
+                                        caught=IndexError,
                                         branch=owyl.succeed())
                              )
         v = owyl.visit(tree)
@@ -281,7 +313,7 @@ class OwylTests(unittest.TestCase):
         bb = blackboard.Blackboard('test', value=value)
         tree = blackboard.checkBB(key='value',
                                   check=checker)
-        
+
         # Note that we can pass in the blackboard at run-time.
         v = owyl.visit(tree, blackboard=bb)
 
@@ -312,7 +344,7 @@ class OwylTests(unittest.TestCase):
                              blackboard.checkBB(key='value',
                                                 check=checker)
                              )
-        
+
         # Note that we can pass in the blackboard at run-time.
         v = owyl.visit(tree, blackboard=bb)
 
@@ -391,6 +423,84 @@ class OwylTests(unittest.TestCase):
         results = [x for x in v]
         result = results[-1]
         self.assertEqual(result, True)
+
+    def testRepeatUntilSucceed_Count(self):
+        """Does repeatUntilSucceed execute its child with every tick?
+        """
+        # How many times to repeat the behavior?
+        ticks = 100
+        bb = blackboard.Blackboard('test', count=0)
+
+        @owyl.task
+        def increment(**kwargs):
+            bb, key = kwargs['blackboard'], kwargs['key']
+            bb[key] += 1
+            yield False
+
+        tree = owyl.repeatUntilSucceed(increment(key='count'))
+        v = owyl.visit(tree, blackboard=bb)
+        for i in xrange(ticks):
+            v.next()
+        self.assertEqual(bb['count'], ticks)
+
+        # Need to reset the blackboard to get the same results.
+        bb = blackboard.Blackboard('test', count=0)
+        v = owyl.visit(tree, blackboard=bb)
+        for i in xrange(ticks):
+            v.next()
+        self.assertEqual(bb['count'], ticks)
+
+    def testRepeatUntilFail_Count(self):
+        """Does repeatUntilFail execute its child with every tick?
+        """
+        # How many times to repeat the behavior?
+        ticks = 100
+        bb = blackboard.Blackboard('test', count=0)
+
+        @owyl.task
+        def increment(**kwargs):
+            bb, key = kwargs['blackboard'], kwargs['key']
+            bb[key] += 1
+            yield True
+
+        tree = owyl.repeatUntilFail(increment(key='count'))
+        v = owyl.visit(tree, blackboard=bb)
+        for i in xrange(ticks):
+          v.next()
+        self.assertEqual(bb['count'], ticks)
+
+        # Need to reset the blackboard to get the same results.
+        bb = blackboard.Blackboard('test', count=0)
+        v = owyl.visit(tree, blackboard=bb)
+        for i in xrange(ticks):
+          v.next()
+        self.assertEqual(bb['count'], ticks)
+
+    def testRepeatAlways_Count(self):
+        """Does repeatAlways execute its child with every tick?
+        """
+        # How many times to repeat the behavior?
+        ticks = 100
+        bb = blackboard.Blackboard('test', count=0)
+
+        @owyl.task
+        def increment(**kwargs):
+            bb, key = kwargs['blackboard'], kwargs['key']
+            bb[key] += 1
+            yield True
+
+        tree = owyl.repeatAlways(increment(key='count'))
+        v = owyl.visit(tree, blackboard=bb)
+        for i in xrange(ticks):
+          v.next()
+        self.assertEqual(bb['count'], ticks)
+
+        # Need to reset the blackboard to get the same results.
+        bb = blackboard.Blackboard('test', count=0)
+        v = owyl.visit(tree, blackboard=bb)
+        for i in xrange(ticks):
+          v.next()
+        self.assertEqual(bb['count'], ticks)
 
 
 if __name__ == "__main__":
