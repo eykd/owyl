@@ -14,6 +14,7 @@ __date__ = "$Date$"[7:-2]
 
 import logging
 from collections import OrderedDict
+from functools import wraps
 
 try:
     from mx.Stack import Stack, EmptyError
@@ -33,19 +34,13 @@ __all__ = ['wrap', 'task', 'taskmethod', 'parent_task', 'parent_taskmethod', 'vi
 def wrap(func, *args, **kwargs):
     """Wrap a callable as a task. Yield the boolean of its result.
     """
+    @wraps(func)
     def initTask(**initkwargs):
+        @wraps(func)
         def makeIterator(**runkwargs):
             result = func(*args, **kwargs)
             yield bool(result)
-        try: makeIterator.__name__ = func.__name__
-        except AttributeError: pass
-        try: makeIterator.__doc__ = func.__doc__
-        except AttributeError: pass
         return makeIterator
-    try: initTask.__doc__ = func.__doc__
-    except AttributeError: pass
-    try: initTask.__name__ = func.__name__
-    except AttributeError: pass
     return initTask
 
 
@@ -55,20 +50,14 @@ def task(func):
     Decorate a generator function to produce a re-usable generator
     factory for the given task.
     """
+    @wraps(func)
     def initTask(**initkwargs):
+        @wraps(func)
         def makeIterator(**runkwargs):
             runkwargs.update(initkwargs)
             iterator = func(**runkwargs)
             return iterator
-        try: makeIterator.__name__ = func.__name__
-        except AttributeError: pass
-        try: makeIterator.__doc__ = func.__doc__
-        except AttributeError: pass
         return makeIterator
-    try: initTask.__doc__ = func.__doc__
-    except AttributeError: pass
-    try: initTask.__name__ = func.__name__
-    except AttributeError: pass
     return initTask
 
 
@@ -78,20 +67,14 @@ def taskmethod(func):
     Decorate a generator function to produce a re-usable generator
     factory for the given task.
     """
+    @wraps(func)
     def initTask(self, **initkwargs):
+        @wraps(func)
         def makeIterator(**runkwargs):
             runkwargs.update(initkwargs)
             iterator = func(self, **runkwargs)
             return iterator
-        try: makeIterator.__name__ = func.__name__
-        except AttributeError: pass
-        try: makeIterator.__doc__ = func.__doc__
-        except AttributeError: pass
         return makeIterator
-    try: initTask.__doc__ = func.__doc__
-    except AttributeError: pass
-    try: initTask.__name__ = func.__name__
-    except AttributeError: pass
     return initTask
 
 
@@ -103,20 +86,14 @@ def parent_task(func):
     Decorate a generator function to produce a re-usable generator
     factory for the given task.
     """
+    @wraps(func)
     def initTask(*children, **initkwargs):
+        @wraps(func)
         def makeIterator(**runkwargs):
             runkwargs.update(initkwargs)
             iterator = func(*children, **runkwargs)
             return iterator
-        try: makeIterator.__name__ = func.__name__
-        except AttributeError: pass
-        try: makeIterator.__doc__ = func.__doc__
-        except AttributeError: pass
         return makeIterator
-    try: initTask.__doc__ = func.__doc__
-    except AttributeError: pass
-    try: initTask.__name__ = func.__name__
-    except AttributeError: pass
     return initTask
 
 
@@ -128,20 +105,14 @@ def parent_taskmethod(func):
     Decorate a generator function to produce a re-usable generator
     factory for the given task.
     """
+    @wraps(func)
     def initTask(self, *children, **initkwargs):
+        @wraps(func)
         def makeIterator(**runkwargs):
             runkwargs.update(initkwargs)
             iterator = func(self, *children, **runkwargs)
             return iterator
-        try: makeIterator.__name__ = func.__name__
-        except AttributeError: pass
-        try: makeIterator.__doc__ = func.__doc__
-        except AttributeError: pass
         return makeIterator
-    try: initTask.__doc__ = func.__doc__
-    except AttributeError: pass
-    try: initTask.__name__ = func.__name__
-    except AttributeError: pass
     return initTask
 
 
