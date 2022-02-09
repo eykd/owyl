@@ -10,7 +10,7 @@ __author__ = "$Author$"[9:-2]
 __revision__ = "$Rev$"
 __date__ = "$Date$"[7:-2]
 
-__version__ = "0.3"
+__version__ = "0.4"
 __release__ = '.r'.join((__version__, __revision__))
 
 __description__ = "The goal of Owyl: provide a fast and flexible Behavior Tree library implemented in python."
@@ -48,10 +48,11 @@ setup(
     version = __version__,
     author = "David Eyk",
     author_email = "eykd@eykd.net",
-    url = "http://code.google.com/p/owyl/",
+    maintainer="Christopher Toth",
+    maintainer_email="q@q-continuum.net",
+    url = "https://github.com/ctoth/owyl",
     description = __description__,
     long_description = __long_description__,
-    download_url = "http://code.google.com/p/owyl/downloads/list",
     classifiers = __classifiers__,
 
     package_dir = {'': 'src',},
@@ -64,6 +65,6 @@ setup(
     install_requires=INSTALL_REQUIRES,
     zip_safe = ZIP_SAFE,
 
-    test_suite = "nose.collector",
+    test_suite = "tests",
     )
 
