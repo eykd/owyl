@@ -9,6 +9,7 @@ $Author$\n
 $Rev$\n
 $Date$
 """
+from __future__ import absolute_import
 
 __author__ = "$Author$"[9:-2]
 __revision__ = "$Rev$"[6:-2]
@@ -16,7 +17,7 @@ __date__ = "$Date$"[7:-2]
 
 import time
 
-import core
+from . import core
 
 __all__ = ['identity', 'repeatUntilFail', 'repeatUntilSucceed',
            'flip', 'repeatAlways', 'limit']
@@ -55,7 +56,7 @@ def repeatAlways(child, **kwargs):
             continue
         while result is None:
             try:
-                result = (yield visitor.next())
+                result = (yield next(visitor))
             except StopIteration:
                 yield None
                 break
@@ -125,5 +126,5 @@ def limit(child, **kwargs):
             yield None
             continue
         last_run = nowtime()
-        result = visitor.next()
+        result = next(visitor)
         yield result

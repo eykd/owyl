@@ -62,11 +62,12 @@ $Author$\n
 $Rev$\n
 $Date$
 """
+from __future__ import absolute_import
 
 __author__ = "$Author$"[9:-2]
 __revision__ = "$Rev$"[6:-2]
 __date__ = "$Date$"[7:-2]
 
-from core import *
-from decorators import *
-from blackboard import *
+from .core import *
+from .decorators import *
+from .blackboard import *

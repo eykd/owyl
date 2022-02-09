@@ -9,6 +9,7 @@ $Author$\n
 $Rev$\n
 $Date$
 """
+from __future__ import absolute_import
 
 __author__ = "$Author$"[9:-2]
 __revision__ = "$Rev$"[6:-2]
@@ -17,7 +18,7 @@ __date__ = "$Date$"[7:-2]
 
 from collections import defaultdict
 
-import core
+from . import core
 
 __all__ = ['Blackboard', 'checkBB', 'setBB', ]
 

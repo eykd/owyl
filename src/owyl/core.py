@@ -7,6 +7,7 @@ $Author$\n
 $Rev$\n
 $Date$
 """
+from __future__ import absolute_import
 
 __author__ = "$Author$"[9:-2]
 __revision__ = "$Rev$"[6:-2]
@@ -17,7 +18,7 @@ import logging
 try:
     from mx.Stack import Stack, EmptyError
 except ImportError:
-    from stack import Stack, EmptyError
+    from .stack import Stack, EmptyError
 
 RETURN_VALUES = set((True, False, None))
 
@@ -176,7 +177,7 @@ def visit(tree, **kwargs):
                 send_value = None
                 send_ok = False
             else:
-                child = current.next()
+                child = next(current)
 
             if child in return_values:
                 send_value = child
@@ -190,8 +191,8 @@ def visit(tree, **kwargs):
             try:
                 current = s.pop()
                 send_ok = True
-            except EmptyError:
-                raise StopIteration
+            except (EmptyError, IndexError) as e:
+                return
 
 
 @task
@@ -222,7 +223,7 @@ def stall(**kwargs):
     """
     func = kwargs.pop('func')
     after = kwargs.pop('after', 1)
-    for x in xrange(after):
+    for x in range(after):
         yield None
     yield bool(func())
 
@@ -237,7 +238,7 @@ def succeedAfter(**kwargs):
     @type after: int
     """
     after = kwargs.pop('after', 1)
-    for x in xrange(after):
+    for x in range(after):
         yield None
     yield True
 
@@ -252,7 +253,7 @@ def failAfter(**kwargs):
     @type after: int
     """
     after = kwargs.pop('after', 1)
-    for x in xrange(after):
+    for x in range(after):
         yield None
     yield False
 
@@ -329,7 +330,7 @@ def parallel_queue(queue, **kwargs):
         visiting[:] = visits  # Se we can remove from visits
         for child in visiting:
             try:
-                child.next()
+                next(child)
             except StopIteration:
                 visits.remove(child)
         yield None
@@ -402,7 +403,7 @@ def parallel(*children, **kwargs):
         try:
             # Run one step on each child per iteration.
             for child in visits:
-                result = child.next()
+                result = next(child)
                 if result in return_values:
                     if not result and all_must_succeed:
                         final_value = False
@@ -413,9 +414,9 @@ def parallel(*children, **kwargs):
                     else:
                         final_value = result
             yield None
-        except StopIteration:
+        except (EmptyError, IndexError):
             break
-        except EmptyError:
+        except StopIteration:
             break
     yield final_value
 
@@ -437,9 +438,10 @@ def throw(**kwargs):
         def __iter__(self):
             return self
 
-        def next(self):
+        def __next__(self):
             raise throws(throws_message)
 
+        next =  __next__
     return gen()
 
 
@@ -461,7 +463,7 @@ def catch(child, **kwargs):
     tree = visit(child, **kwargs)
     try:
         while result is None:
-            result = tree.next()
+            result = next(tree)
             yield None
     except caught:
         while result is None:
